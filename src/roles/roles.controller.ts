@@ -65,7 +65,7 @@ export class RolesController {
     },
   })
   create(@Body() createRoleDto: CreateRoleDto) {
-    return this.rolesService.create(createRoleDto);
+    return this.rolesService.createRole(createRoleDto);
   }
 
   @Get()
@@ -96,7 +96,7 @@ export class RolesController {
     ],
   })
   findAll() {
-    return this.rolesService.findAll();
+    return this.rolesService.findAllRoles();
   }
 
   @Get(':id')
@@ -127,7 +127,7 @@ export class RolesController {
     description: 'Role not found',
   })
   findOne(@Param('id') id: string) {
-    return this.rolesService.findOne(+id);
+    return this.rolesService.findOneRole(+id);
   }
 
   @Put(':id')
@@ -186,7 +186,7 @@ export class RolesController {
     description: 'Role not found',
   })
   update(@Param('id') id: string, @Body() updateRoleDto: UpdateRoleDto) {
-    return this.rolesService.update(+id, updateRoleDto);
+    return this.rolesService.updateRole(+id, updateRoleDto);
   }
 
   @Delete(':id')
@@ -212,6 +212,6 @@ export class RolesController {
     description: 'Role not found',
   })
   remove(@Param('id') id: string) {
-    return this.rolesService.remove(+id);
+    return this.rolesService.deleteRole(+id);
   }
 }

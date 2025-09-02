@@ -8,7 +8,7 @@ export class RolesService {
   private roles: Role[] = [];
   private nextId = 1;
 
-  create(createRoleDto: CreateRoleDto): Role {
+  createRole(createRoleDto: CreateRoleDto): Role {
     const role = new Role({
       id: this.nextId++,
       ...createRoleDto,
@@ -18,11 +18,11 @@ export class RolesService {
     return role;
   }
 
-  findAll(): Role[] {
+  findAllRoles(): Role[] {
     return this.roles.filter((role) => role.status);
   }
 
-  findOne(id: number): Role {
+  findOneRole(id: number): Role {
     const role = this.roles.find((role) => role.id === id && role.status);
     if (!role) {
       throw new NotFoundException(`Role with ID ${id} not found`);
@@ -30,7 +30,7 @@ export class RolesService {
     return role;
   }
 
-  update(id: number, updateRoleDto: UpdateRoleDto): Role {
+  updateRole(id: number, updateRoleDto: UpdateRoleDto): Role {
     const roleIndex = this.roles.findIndex(
       (role) => role.id === id && role.status,
     );
@@ -47,7 +47,7 @@ export class RolesService {
     return this.roles[roleIndex];
   }
 
-  remove(id: number): { message: string } {
+  deleteRole(id: number): { message: string } {
     const roleIndex = this.roles.findIndex(
       (role) => role.id === id && role.status,
     );
