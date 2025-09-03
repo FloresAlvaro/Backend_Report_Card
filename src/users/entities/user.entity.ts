@@ -1,5 +1,4 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Role } from '../../roles/entities/role.entity';
 
 export class User {
   @ApiProperty({
@@ -32,12 +31,6 @@ export class User {
     example: 1,
   })
   roleId: number;
-
-  @ApiProperty({
-    description: 'Role assigned to the user',
-    type: () => Role,
-  })
-  role?: Role;
 
   @ApiProperty({
     description: 'Status of the user (active/inactive)',

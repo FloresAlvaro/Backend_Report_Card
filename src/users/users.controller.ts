@@ -20,6 +20,7 @@ import {
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { UserWithRoleDto } from './dto/user-with-role.dto';
 import { User } from './entities/user.entity';
 
 @ApiTags('Users')
@@ -103,13 +104,13 @@ export class UsersController {
   @ApiResponse({
     status: 200,
     description: 'User with role retrieved successfully',
-    type: User,
+    type: UserWithRoleDto,
   })
   @ApiResponse({
     status: 404,
     description: 'User not found',
   })
-  findUserWithRole(@Param('id', ParseIntPipe) id: number): User {
+  findUserWithRole(@Param('id', ParseIntPipe) id: number): UserWithRoleDto {
     return this.usersService.findUserWithRole(id);
   }
 

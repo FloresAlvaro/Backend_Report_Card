@@ -6,6 +6,7 @@ import {
 } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { UserWithRoleDto } from './dto/user-with-role.dto';
 import { User } from './entities/user.entity';
 import { RolesService } from '../roles/roles.service';
 
@@ -101,7 +102,6 @@ export class UsersService {
     this.users[userIndex] = {
       ...this.users[userIndex],
       ...updateUserDto,
-      updatedAt: new Date(),
     };
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -119,21 +119,21 @@ export class UsersService {
 
     // Soft delete - just mark as inactive
     this.users[userIndex].status = false;
-    this.users[userIndex].updatedAt = new Date();
 
     return { message: `User with ID ${id} has been removed` };
   }
 
-  findUserWithRole(id: number): User {
+  findUserWithRole(id: number): UserWithRoleDto {
     const user = this.findOne(id);
     if (user.roleId) {
       try {
         const role = this.rolesService.findOneRole(user.roleId);
-        user.role = role;
+        return { ...user, role } as UserWithRoleDto;
       } catch {
         // Role might have been deleted, but we still return the user
+        return user as UserWithRoleDto;
       }
     }
-    return user;
+    return user as UserWithRoleDto;
   }
 }
