@@ -18,7 +18,7 @@ export class UsersService {
   constructor(private readonly rolesService: RolesService) {}
 
   create(createUserDto: CreateUserDto): User {
-    // Verificar que el role existe
+    // Verify role exists
     try {
       this.rolesService.findOneRole(createUserDto.roleId);
     } catch {
@@ -27,7 +27,7 @@ export class UsersService {
       );
     }
 
-    // Verificar que el email no esté en uso
+    // Verify email is not in use
     const existingUser = this.users.find(
       (user) => user.email === createUserDto.email && user.status,
     );
@@ -75,7 +75,7 @@ export class UsersService {
       throw new NotFoundException(`User with ID ${id} not found`);
     }
 
-    // Si se está actualizando el roleId, verificar que el role existe
+    // Verify role exists if updating roleId
     if (updateUserDto.roleId) {
       try {
         this.rolesService.findOneRole(updateUserDto.roleId);
@@ -86,7 +86,7 @@ export class UsersService {
       }
     }
 
-    // Si se está actualizando el email, verificar que no esté en uso por otro usuario
+    // Verify email is not in use if updating email
     if (updateUserDto.email) {
       const existingUser = this.users.find(
         (user) =>
