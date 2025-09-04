@@ -6,6 +6,9 @@ import {
   Param,
   Delete,
   Put,
+  ParseIntPipe,
+  HttpCode,
+  HttpStatus,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -19,7 +22,7 @@ import { CreateRoleDto } from './dto/create-role.dto';
 import { UpdateRoleDto } from './dto/update-role.dto';
 import { Role } from './entities/role.entity';
 
-@ApiTags('roles')
+@ApiTags('Roles')
 @Controller('roles')
 export class RolesController {
   constructor(private readonly rolesService: RolesService) {}
@@ -27,191 +30,122 @@ export class RolesController {
   @Post()
   @ApiOperation({
     summary: 'Create a new role',
-    description:
-      'Creates a new role in the system. Example: Create an admin role with full permissions.',
+    description: 'Creates a new role in the system',
   })
-  @ApiBody({
-    type: CreateRoleDto,
-    description: 'Role data to create',
-    examples: {
-      admin: {
-        summary: 'Admin Role Example',
-        description: 'Example of creating an admin role with full permissions',
-        value: {
-          name: 'admin',
-          status: true,
-        },
-      },
-      user: {
-        summary: 'User Role Example',
-        description: 'Example of creating a regular user role',
-        value: {
-          name: 'user',
-          status: true,
-        },
-      },
-    },
-  })
+  @ApiBody({ type: CreateRoleDto })
   @ApiResponse({
     status: 201,
     description: 'Role created successfully',
     type: Role,
-    example: {
-      id: 1,
-      name: 'admin',
-      status: true,
-      createdAt: '2025-09-01T20:52:00.000Z',
-      updatedAt: '2025-09-01T20:52:00.000Z',
-    },
   })
-  create(@Body() createRoleDto: CreateRoleDto) {
+  @ApiResponse({
+    status: 409,
+    description: 'Conflict - Role with this name already exists',
+  })
+  createRole(@Body() createRoleDto: CreateRoleDto): Role {
     return this.rolesService.createRole(createRoleDto);
   }
 
   @Get()
   @ApiOperation({
     summary: 'Get all active roles',
-    description:
-      'Retrieves all active roles in the system, including admin, user, and other role types.',
+    description: 'Retrieves all active roles in the system',
   })
   @ApiResponse({
     status: 200,
-    description: 'List of active roles',
+    description: 'List of active roles retrieved successfully',
     type: [Role],
-    example: [
-      {
-        id: 1,
-        name: 'admin',
-        status: true,
-        createdAt: '2025-09-01T20:52:00.000Z',
-        updatedAt: '2025-09-01T20:52:00.000Z',
-      },
-      {
-        id: 2,
-        name: 'user',
-        status: true,
-        createdAt: '2025-09-01T20:53:00.000Z',
-        updatedAt: '2025-09-01T20:53:00.000Z',
-      },
-    ],
   })
-  findAll() {
+  findAllRoles(): Role[] {
     return this.rolesService.findAllRoles();
   }
 
   @Get(':id')
   @ApiOperation({
     summary: 'Get role by ID',
-    description:
-      'Retrieves a specific role by its ID. Example: Get admin role details by ID.',
+    description: 'Retrieves a specific role by its ID',
   })
   @ApiParam({
     name: 'id',
     description: 'Role ID',
+    type: 'number',
     example: 1,
   })
   @ApiResponse({
     status: 200,
-    description: 'Role found',
+    description: 'Role retrieved successfully',
     type: Role,
-    example: {
-      id: 1,
-      name: 'admin',
-      status: true,
-      createdAt: '2025-09-01T20:52:00.000Z',
-      updatedAt: '2025-09-01T20:52:00.000Z',
-    },
   })
   @ApiResponse({
     status: 404,
     description: 'Role not found',
   })
-  findOne(@Param('id') id: string) {
-    return this.rolesService.findOneRole(+id);
+  findOneRole(@Param('id', ParseIntPipe) id: number): Role {
+    return this.rolesService.findOneRole(id);
   }
 
   @Put(':id')
   @ApiOperation({
     summary: 'Update role',
-    description:
-      'Updates an existing role. Example: Change admin role status or name.',
+    description: 'Updates an existing role',
   })
   @ApiParam({
     name: 'id',
-    description: 'Role ID to update',
+    description: 'Role ID',
+    type: 'number',
     example: 1,
   })
-  @ApiBody({
-    type: UpdateRoleDto,
-    description: 'Role data to update',
-    examples: {
-      deactivateAdmin: {
-        summary: 'Deactivate Admin Role',
-        description: 'Example of deactivating an admin role',
-        value: {
-          status: false,
-        },
-      },
-      renameAdmin: {
-        summary: 'Rename Admin Role',
-        description: 'Example of renaming admin role to super-admin',
-        value: {
-          name: 'super-admin',
-        },
-      },
-      completeUpdate: {
-        summary: 'Complete Admin Update',
-        description: 'Example of updating both name and status',
-        value: {
-          name: 'system-admin',
-          status: true,
-        },
-      },
-    },
-  })
+  @ApiBody({ type: UpdateRoleDto })
   @ApiResponse({
     status: 200,
     description: 'Role updated successfully',
     type: Role,
-    example: {
-      id: 1,
-      name: 'admin',
-      status: false,
-      createdAt: '2025-09-01T20:52:00.000Z',
-      updatedAt: '2025-09-01T20:55:00.000Z',
-    },
   })
   @ApiResponse({
     status: 404,
     description: 'Role not found',
   })
-  update(@Param('id') id: string, @Body() updateRoleDto: UpdateRoleDto) {
-    return this.rolesService.updateRole(+id, updateRoleDto);
+  @ApiResponse({
+    status: 409,
+    description: 'Conflict - Role name already exists',
+  })
+  updateRole(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateRoleDto: UpdateRoleDto,
+  ): Role {
+    return this.rolesService.updateRole(id, updateRoleDto);
   }
 
   @Delete(':id')
+  @HttpCode(HttpStatus.OK)
   @ApiOperation({
-    summary: 'Delete role (soft delete)',
-    description:
-      'Soft deletes a role by setting its status to false. Example: Deactivate admin role.',
+    summary: 'Delete role',
+    description: 'Soft deletes a role (marks as inactive)',
   })
   @ApiParam({
     name: 'id',
-    description: 'Role ID to delete',
+    description: 'Role ID',
+    type: 'number',
     example: 1,
   })
   @ApiResponse({
     status: 200,
     description: 'Role deleted successfully',
-    example: {
-      message: 'Role with ID 1 has been removed',
+    schema: {
+      type: 'object',
+      properties: {
+        message: {
+          type: 'string',
+          example: 'Role with ID 1 has been removed',
+        },
+      },
     },
   })
   @ApiResponse({
     status: 404,
     description: 'Role not found',
   })
-  remove(@Param('id') id: string) {
-    return this.rolesService.deleteRole(+id);
+  deleteRole(@Param('id', ParseIntPipe) id: number): { message: string } {
+    return this.rolesService.deleteRole(id);
   }
 }

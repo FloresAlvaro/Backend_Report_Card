@@ -1,20 +1,26 @@
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
+import { UsersModule } from './users/users.module';
+import { RolesModule } from './roles/roles.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  // Swagger Configuration
+  // Swagger Configuration - Solo para User y Role schemas
   const config = new DocumentBuilder()
     .setTitle('Report Card API')
-    .setDescription('API documentation for the Report Card backend application')
+    .setDescription('API documentation for User and Role management')
     .setVersion('1.0')
-    .addTag('roles', 'Role management endpoints')
-    .addTag('app', 'Application health endpoints')
+    .addTag('Users', 'User management endpoints')
+    .addTag('Roles', 'Role management endpoints')
     .build();
 
-  const document = SwaggerModule.createDocument(app, config);
+  // Crear documento solo con los módulos de Users y Roles
+  const document = SwaggerModule.createDocument(app, config, {
+    include: [UsersModule, RolesModule],
+  });
+
   SwaggerModule.setup('api', app, document);
 
   await app.listen(process.env.PORT ?? 3000);

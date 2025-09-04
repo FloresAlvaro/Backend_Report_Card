@@ -29,26 +29,8 @@ export class Role {
   })
   status: boolean;
 
-  @ApiProperty({
-    description: 'Date when the role was created',
-    example: '2025-09-01T20:52:00.000Z',
-  })
-  createdAt: Date;
-
-  @ApiProperty({
-    description: 'Date when the role was last updated',
-    example: '2025-09-01T20:52:00.000Z',
-  })
-  updatedAt: Date;
-
   constructor(partial: Partial<Role> = {}) {
     Object.assign(this, partial);
-    if (!this.createdAt) {
-      this.createdAt = new Date();
-    }
-    if (!this.updatedAt) {
-      this.updatedAt = new Date();
-    }
     if (this.status === undefined) {
       this.status = true; // Default to active
     }
