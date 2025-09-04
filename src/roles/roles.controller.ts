@@ -42,8 +42,8 @@ export class RolesController {
     status: 409,
     description: 'Conflict - Role with this name already exists',
   })
-  create(@Body() createRoleDto: CreateRoleDto): Role {
-    return this.rolesService.create(createRoleDto);
+  createRole(@Body() createRoleDto: CreateRoleDto): Role {
+    return this.rolesService.createRole(createRoleDto);
   }
 
   @Get()
@@ -56,7 +56,7 @@ export class RolesController {
     description: 'List of active roles retrieved successfully',
     type: [Role],
   })
-  findAll(): Role[] {
+  findAllRoles(): Role[] {
     return this.rolesService.findAllRoles();
   }
 
@@ -80,7 +80,7 @@ export class RolesController {
     status: 404,
     description: 'Role not found',
   })
-  findOne(@Param('id', ParseIntPipe) id: number): Role {
+  findOneRole(@Param('id', ParseIntPipe) id: number): Role {
     return this.rolesService.findOneRole(id);
   }
 
@@ -109,7 +109,7 @@ export class RolesController {
     status: 409,
     description: 'Conflict - Role name already exists',
   })
-  update(
+  updateRole(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateRoleDto: UpdateRoleDto,
   ): Role {
@@ -145,7 +145,7 @@ export class RolesController {
     status: 404,
     description: 'Role not found',
   })
-  remove(@Param('id', ParseIntPipe) id: number): { message: string } {
+  deleteRole(@Param('id', ParseIntPipe) id: number): { message: string } {
     return this.rolesService.deleteRole(id);
   }
 }

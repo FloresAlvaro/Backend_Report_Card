@@ -12,7 +12,7 @@ export class RolesService {
   private roles: Role[] = [];
   private nextId = 1;
 
-  create(createRoleDto: CreateRoleDto): Role {
+  createRole(createRoleDto: CreateRoleDto): Role {
     // Verify that the name is not already in use
     const existingRole = this.roles.find(
       (role) =>

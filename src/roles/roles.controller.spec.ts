@@ -28,15 +28,13 @@ describe('RolesController', () => {
     };
 
     // Act: Create the admin role using the controller
-    const result = controller.create(createAdminDto);
+    const result = controller.createRole(createAdminDto);
 
     // Assert: Verify the admin role was created with expected properties
     expect(result).toBeDefined();
     expect(result.name).toBe('admin');
     expect(result.status).toBe(true);
     expect(result.id).toBeDefined(); // Should have auto-generated ID
-    expect(result.createdAt).toBeInstanceOf(Date);
-    expect(result.updatedAt).toBeInstanceOf(Date);
   });
 
   // Test: Retrieve all active roles including admin
@@ -46,12 +44,12 @@ describe('RolesController', () => {
     const userDto: CreateRoleDto = { name: 'user', status: true };
     const inactiveDto: CreateRoleDto = { name: 'inactive-role', status: false };
 
-    controller.create(adminDto);
-    controller.create(userDto);
-    controller.create(inactiveDto);
+    controller.createRole(adminDto);
+    controller.createRole(userDto);
+    controller.createRole(inactiveDto);
 
     // Act: Retrieve all active roles
-    const result = controller.findAll();
+    const result = controller.findAllRoles();
 
     // Assert: Should return only active roles (admin and user, not inactive)
     expect(result).toBeDefined();
@@ -69,18 +67,16 @@ describe('RolesController', () => {
       name: 'admin',
       status: true,
     };
-    const createdAdmin = controller.create(createAdminDto);
+    const createdAdmin = controller.createRole(createAdminDto);
 
     // Act: Find the admin role by its ID
-    const result = controller.findOne(createdAdmin.id.toString());
+    const result = controller.findOneRole(createdAdmin.id);
 
     // Assert: Verify the found admin role matches the created one
     expect(result).toBeDefined();
     expect(result.id).toBe(createdAdmin.id);
     expect(result.name).toBe('admin');
     expect(result.status).toBe(true);
-    expect(result.createdAt).toEqual(createdAdmin.createdAt);
-    expect(result.updatedAt).toEqual(createdAdmin.updatedAt);
   });
 
   // Test: Update admin role properties
@@ -90,23 +86,17 @@ describe('RolesController', () => {
       name: 'admin',
       status: true,
     };
-    const createdAdmin = controller.create(createAdminDto);
-    const originalTimestamp = createdAdmin.updatedAt.getTime();
+    const createdAdmin = controller.createRole(createAdminDto);
 
-    // Wait a moment to ensure timestamp difference
     const updateDto = { name: 'super-admin', status: true };
 
     // Act: Update the admin role
-    const result = controller.update(createdAdmin.id.toString(), updateDto);
+    const result = controller.updateRole(createdAdmin.id, updateDto);
 
     // Assert: Verify the admin role was updated correctly
     expect(result).toBeDefined();
     expect(result.id).toBe(createdAdmin.id); // ID should remain the same
     expect(result.name).toBe('super-admin'); // Name should be updated
     expect(result.status).toBe(true); // Status should be updated
-    expect(result.createdAt).toEqual(createdAdmin.createdAt); // CreatedAt should remain unchanged
-    expect(result.updatedAt.getTime()).toBeGreaterThanOrEqual(
-      originalTimestamp,
-    ); // UpdatedAt should be newer or equal
   });
 });

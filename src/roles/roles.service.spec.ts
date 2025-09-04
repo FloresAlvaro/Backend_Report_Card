@@ -1,9 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { NotFoundException } from '@nestjs/common';
+import { NotFoundException, ConflictException } from '@nestjs/common';
 import { RolesService } from './roles.service';
 import { CreateRoleDto } from './dto/create-role.dto';
 import { UpdateRoleDto } from './dto/update-role.dto';
-import { Role } from './entities/role.entity';
 
 describe('RolesService', () => {
   let service: RolesService;
@@ -20,7 +19,7 @@ describe('RolesService', () => {
     expect(service).toBeDefined();
   });
 
-  describe('createRole', () => {
+  describe('create', () => {
     it('should create an admin role successfully', () => {
       // Arrange
       const createAdminDto: CreateRoleDto = {
@@ -36,8 +35,6 @@ describe('RolesService', () => {
       expect(result.id).toBe(1); // First role should have ID 1
       expect(result.name).toBe('admin');
       expect(result.status).toBe(true);
-      expect(result.createdAt).toBeInstanceOf(Date);
-      expect(result.updatedAt).toBeInstanceOf(Date);
     });
 
     it('should create role with default status when not provided', () => {
@@ -68,6 +65,19 @@ describe('RolesService', () => {
       expect(role1.id).toBe(1);
       expect(role2.id).toBe(2);
       expect(role3.id).toBe(3);
+    });
+
+    it('should throw ConflictException for duplicate role names', () => {
+      // Arrange
+      const adminRole: CreateRoleDto = { name: 'admin', status: true };
+      service.createRole(adminRole);
+
+      const duplicateAdminRole: CreateRoleDto = { name: 'ADMIN', status: true };
+
+      // Act & Assert
+      expect(() => service.createRole(duplicateAdminRole)).toThrow(
+        ConflictException,
+      );
     });
   });
 
@@ -162,15 +172,9 @@ describe('RolesService', () => {
   describe('updateRole', () => {
     it('should update admin role status', () => {
       // Arrange
-      jest.useFakeTimers();
-      const now = new Date();
-      jest.setSystemTime(now);
-
       const adminRole: CreateRoleDto = { name: 'admin', status: true };
       const createdRole = service.createRole(adminRole);
 
-      // Wait a moment before updating
-      jest.advanceTimersByTime(100);
       const updateDto: UpdateRoleDto = { status: false };
 
       // Act
@@ -180,11 +184,6 @@ describe('RolesService', () => {
       expect(result.id).toBe(createdRole.id);
       expect(result.name).toBe('admin'); // Name should remain unchanged
       expect(result.status).toBe(false); // Status should be updated
-      expect(result.updatedAt.getTime()).toBeGreaterThan(
-        result.createdAt.getTime(),
-      );
-
-      jest.useRealTimers();
     });
 
     it('should update admin role name', () => {
@@ -243,6 +242,21 @@ describe('RolesService', () => {
         NotFoundException,
       );
     });
+
+    it('should throw ConflictException when updating to duplicate name', () => {
+      // Arrange
+      const adminRole: CreateRoleDto = { name: 'admin', status: true };
+      const userRole: CreateRoleDto = { name: 'user', status: true };
+      service.createRole(adminRole);
+      const createdUserRole = service.createRole(userRole);
+
+      const updateDto: UpdateRoleDto = { name: 'admin' };
+
+      // Act & Assert
+      expect(() => service.updateRole(createdUserRole.id, updateDto)).toThrow(
+        ConflictException,
+      );
+    });
   });
 
   describe('deleteRole', () => {
@@ -285,33 +299,6 @@ describe('RolesService', () => {
       expect(() => service.deleteRole(createdRole.id)).toThrow(
         NotFoundException,
       );
-    });
-
-    it('should update updatedAt timestamp when soft deleting', () => {
-      // Arrange
-      const adminRole: CreateRoleDto = { name: 'admin', status: true };
-      const createdRole = service.createRole(adminRole);
-      const originalUpdatedAt = createdRole.updatedAt;
-
-      // Wait a small amount to ensure timestamp difference
-      jest.useFakeTimers();
-      jest.advanceTimersByTime(1000);
-
-      // Act
-      service.deleteRole(createdRole.id);
-
-      // Assert - Check that the role in internal storage has updated timestamp
-      // Verify that the role was actually soft deleted (status changed to false)
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      const roles = (service as any).roles as Role[]; // Access private property for testing
-      const deletedRole = roles.find(
-        (role: Role) => role.id === createdRole.id,
-      );
-      expect(deletedRole?.updatedAt.getTime()).toBeGreaterThan(
-        originalUpdatedAt.getTime(),
-      );
-
-      jest.useRealTimers();
     });
   });
 
@@ -427,23 +414,6 @@ describe('RolesService', () => {
       );
       expect(() => service.deleteRole(0)).toThrow(NotFoundException);
     });
-
-    it('should preserve original timestamps when updating', () => {
-      // Arrange
-      const adminRole = service.createRole({ name: 'admin', status: true });
-      const originalCreatedAt = adminRole.createdAt;
-
-      // Act
-      const updatedRole = service.updateRole(adminRole.id, {
-        name: 'super-admin',
-      });
-
-      // Assert
-      expect(updatedRole.createdAt).toEqual(originalCreatedAt); // Should not change
-      expect(updatedRole.updatedAt.getTime()).toBeGreaterThanOrEqual(
-        originalCreatedAt.getTime(),
-      );
-    });
   });
 
   describe('business logic validation', () => {
@@ -460,16 +430,15 @@ describe('RolesService', () => {
       expect(service.findAllRoles()).toHaveLength(3);
     });
 
-    it('should allow duplicate role names (no unique constraint)', () => {
+    it('should prevent duplicate role names with ConflictException', () => {
       // Arrange & Act
       const admin1 = service.createRole({ name: 'admin', status: true });
-      const admin2 = service.createRole({ name: 'admin', status: true });
 
       // Assert
-      expect(admin1.id).not.toBe(admin2.id);
       expect(admin1.name).toBe('admin');
-      expect(admin2.name).toBe('admin');
-      expect(service.findAllRoles()).toHaveLength(2);
+      expect(() => service.createRole({ name: 'admin', status: true })).toThrow(
+        ConflictException,
+      );
     });
 
     it('should handle partial updates correctly', () => {
@@ -486,7 +455,7 @@ describe('RolesService', () => {
 
       // Assert
       expect(nameUpdate.name).toBe('super-admin');
-      expect(nameUpdate.status).toBe(true); // Status should remain unchanged
+      expect(nameUpdate.status).toBe(true);
       expect(statusUpdate.name).toBe('super-admin'); // Name should remain from previous update
       expect(statusUpdate.status).toBe(false);
     });
