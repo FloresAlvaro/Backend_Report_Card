@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  ConflictException,
+} from '@nestjs/common';
 import { CreateRoleDto } from './dto/create-role.dto';
 import { UpdateRoleDto } from './dto/update-role.dto';
 import { Role } from './entities/role.entity';
@@ -8,7 +12,19 @@ export class RolesService {
   private roles: Role[] = [];
   private nextId = 1;
 
-  createRole(createRoleDto: CreateRoleDto): Role {
+  create(createRoleDto: CreateRoleDto): Role {
+    // Verify that the name is not already in use
+    const existingRole = this.roles.find(
+      (role) =>
+        role.name.toLowerCase() === createRoleDto.name.toLowerCase() &&
+        role.status,
+    );
+    if (existingRole) {
+      throw new ConflictException(
+        `Role with name '${createRoleDto.name}' already exists`,
+      );
+    }
+
     const role = new Role({
       id: this.nextId++,
       ...createRoleDto,
@@ -38,10 +54,24 @@ export class RolesService {
       throw new NotFoundException(`Role with ID ${id} not found`);
     }
 
+    // Verify duplicate name if updating name
+    if (updateRoleDto.name) {
+      const existingRole = this.roles.find(
+        (role) =>
+          role.name.toLowerCase() === updateRoleDto.name!.toLowerCase() &&
+          role.status &&
+          role.id !== id,
+      );
+      if (existingRole) {
+        throw new ConflictException(
+          `Role with name '${updateRoleDto.name}' already exists`,
+        );
+      }
+    }
+
     this.roles[roleIndex] = {
       ...this.roles[roleIndex],
       ...updateRoleDto,
-      updatedAt: new Date(),
     };
 
     return this.roles[roleIndex];
@@ -57,7 +87,6 @@ export class RolesService {
 
     // Soft delete - just mark as inactive
     this.roles[roleIndex].status = false;
-    this.roles[roleIndex].updatedAt = new Date();
 
     return { message: `Role with ID ${id} has been removed` };
   }
