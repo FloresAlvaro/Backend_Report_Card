@@ -60,6 +60,22 @@ export class RolesController {
     return this.rolesService.findAllRoles();
   }
 
+  @Get('all-status')
+  @ApiOperation({
+    summary: 'Get all roles with their status',
+    description:
+      'Retrieves all roles in the system including both active and inactive ones',
+  })
+  @ApiResponse({
+    status: 200,
+    description:
+      'List of all roles (active and inactive) retrieved successfully',
+    type: [Role],
+  })
+  findAllRolesWithStatus(): Role[] {
+    return this.rolesService.findAllRolesWithStatus();
+  }
+
   @Get(':id')
   @ApiOperation({
     summary: 'Get role by ID',

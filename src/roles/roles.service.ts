@@ -38,6 +38,10 @@ export class RolesService {
     return this.roles.filter((role) => role.status);
   }
 
+  findAllRolesWithStatus(): Role[] {
+    return this.roles;
+  }
+
   findOneRole(id: number): Role {
     const role = this.roles.find((role) => role.id === id && role.status);
     if (!role) {
