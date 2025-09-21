@@ -217,7 +217,8 @@ export class UsersController {
   @Get('teachers')
   @ApiOperation({
     summary: 'Get all active teachers',
-    description: 'Returns a list of all active teachers with teacher-specific properties',
+    description:
+      'Returns a list of all active teachers with teacher-specific properties',
   })
   @ApiResponse({
     status: 200,
@@ -306,7 +307,8 @@ export class UsersController {
   })
   @ApiResponse({
     status: 409,
-    description: 'Conflict - Student with this email or enrollment number already exists',
+    description:
+      'Conflict - Student with this email or enrollment number already exists',
   })
   createStudent(@Body() createStudentDto: CreateStudentDto): Student {
     return this.usersService.createStudent(createStudentDto);
@@ -315,7 +317,8 @@ export class UsersController {
   @Get('students')
   @ApiOperation({
     summary: 'Get all active students',
-    description: 'Returns a list of all active students with student-specific properties',
+    description:
+      'Returns a list of all active students with student-specific properties',
   })
   @ApiResponse({
     status: 200,

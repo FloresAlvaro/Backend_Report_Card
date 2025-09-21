@@ -27,12 +27,21 @@ async function bootstrap() {
     .addTag('Roles', 'Role management endpoints')
     .addTag('Grades', 'Grade management endpoints')
     .addTag('Subjects', 'Subject management endpoints')
-    .addTag('Student-Subjects', 'Student-Subject enrollment management endpoints')
+    .addTag(
+      'Student-Subjects',
+      'Student-Subject enrollment management endpoints',
+    )
     .build();
 
   // Crear documento con todos los módulos principales
   const document = SwaggerModule.createDocument(app, config, {
-    include: [UsersModule, RolesModule, GradesModule, SubjectsModule, StudentSubjectsModule],
+    include: [
+      UsersModule,
+      RolesModule,
+      GradesModule,
+      SubjectsModule,
+      StudentSubjectsModule,
+    ],
   });
 
   SwaggerModule.setup('api', app, document);

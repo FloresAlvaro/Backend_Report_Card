@@ -27,7 +27,9 @@ import { StudentSubject } from './entities/student-subject.entity';
 @ApiTags('Student-Subjects')
 @Controller('student-subjects')
 export class StudentSubjectsController {
-  constructor(private readonly studentSubjectsService: StudentSubjectsService) {}
+  constructor(
+    private readonly studentSubjectsService: StudentSubjectsService,
+  ) {}
 
   @Post()
   @ApiOperation({
@@ -42,9 +44,12 @@ export class StudentSubjectsController {
   })
   @ApiResponse({
     status: 409,
-    description: 'Conflict - Student already enrolled in this subject for the academic period',
+    description:
+      'Conflict - Student already enrolled in this subject for the academic period',
   })
-  create(@Body() createStudentSubjectDto: CreateStudentSubjectDto): StudentSubject {
+  create(
+    @Body() createStudentSubjectDto: CreateStudentSubjectDto,
+  ): StudentSubject {
     return this.studentSubjectsService.create(createStudentSubjectDto);
   }
 
@@ -82,7 +87,9 @@ export class StudentSubjectsController {
     status: 404,
     description: 'No enrollments found for this student',
   })
-  findByStudent(@Param('studentId', ParseIntPipe) studentId: number): StudentSubject[] {
+  findByStudent(
+    @Param('studentId', ParseIntPipe) studentId: number,
+  ): StudentSubject[] {
     return this.studentSubjectsService.findByStudent(studentId);
   }
 
@@ -106,14 +113,17 @@ export class StudentSubjectsController {
     status: 404,
     description: 'No enrollments found for this subject',
   })
-  findBySubject(@Param('subjectId', ParseIntPipe) subjectId: number): StudentSubject[] {
+  findBySubject(
+    @Param('subjectId', ParseIntPipe) subjectId: number,
+  ): StudentSubject[] {
     return this.studentSubjectsService.findBySubject(subjectId);
   }
 
   @Get('academic-period')
   @ApiOperation({
     summary: 'Get enrollments by academic period',
-    description: 'Returns all active enrollments for a specific academic year and semester',
+    description:
+      'Returns all active enrollments for a specific academic year and semester',
   })
   @ApiQuery({
     name: 'year',
@@ -186,7 +196,8 @@ export class StudentSubjectsController {
   })
   @ApiResponse({
     status: 409,
-    description: 'Conflict - Student already enrolled in this subject for the academic period',
+    description:
+      'Conflict - Student already enrolled in this subject for the academic period',
   })
   update(
     @Param('id', ParseIntPipe) id: number,
@@ -245,7 +256,8 @@ export class StudentSubjectsController {
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
     summary: 'Deactivate enrollment',
-    description: 'Soft deletes a student-subject enrollment (marks as inactive)',
+    description:
+      'Soft deletes a student-subject enrollment (marks as inactive)',
   })
   @ApiParam({
     name: 'id',

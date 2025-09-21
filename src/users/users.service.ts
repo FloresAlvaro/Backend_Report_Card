@@ -219,8 +219,8 @@ export class UsersService {
     if (updateTeacherDto.email) {
       const existingUser = this.users.find(
         (user) =>
-          user.email === updateTeacherDto.email && 
-          user.status && 
+          user.email === updateTeacherDto.email &&
+          user.status &&
           user.id !== id,
       );
       if (existingUser) {
@@ -263,8 +263,9 @@ export class UsersService {
 
     // Verify enrollment number is unique
     const existingEnrollment = this.users.find(
-      (user) => user instanceof Student && 
-      (user as Student).enrollmentNumber === createStudentDto.enrollmentNumber,
+      (user) =>
+        user instanceof Student &&
+        user.enrollmentNumber === createStudentDto.enrollmentNumber,
     );
     if (existingEnrollment) {
       throw new ConflictException(
@@ -329,8 +330,8 @@ export class UsersService {
     if (updateStudentDto.email) {
       const existingUser = this.users.find(
         (user) =>
-          user.email === updateStudentDto.email && 
-          user.status && 
+          user.email === updateStudentDto.email &&
+          user.status &&
           user.id !== id,
       );
       if (existingUser) {

@@ -8,7 +8,13 @@ import { SubjectsModule } from './subjects/subjects.module';
 import { StudentSubjectsModule } from './student-subjects/student-subjects.module';
 
 @Module({
-  imports: [RolesModule, UsersModule, GradesModule, SubjectsModule, StudentSubjectsModule],
+  imports: [
+    RolesModule,
+    UsersModule,
+    GradesModule,
+    SubjectsModule,
+    StudentSubjectsModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })

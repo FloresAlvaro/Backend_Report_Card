@@ -20,7 +20,8 @@ export class StudentSubjectsService {
         enrollment.studentId === createStudentSubjectDto.studentId &&
         enrollment.subjectId === createStudentSubjectDto.subjectId &&
         enrollment.status &&
-        enrollment.academicYear === (createStudentSubjectDto.academicYear || new Date().getFullYear()) &&
+        enrollment.academicYear ===
+          (createStudentSubjectDto.academicYear || new Date().getFullYear()) &&
         enrollment.semester === (createStudentSubjectDto.semester || 1),
     );
 
@@ -49,7 +50,9 @@ export class StudentSubjectsService {
     );
 
     if (enrollments.length === 0) {
-      throw new NotFoundException(`No active enrollments found for student ${studentId}`);
+      throw new NotFoundException(
+        `No active enrollments found for student ${studentId}`,
+      );
     }
 
     return enrollments;
@@ -61,13 +64,18 @@ export class StudentSubjectsService {
     );
 
     if (enrollments.length === 0) {
-      throw new NotFoundException(`No active enrollments found for subject ${subjectId}`);
+      throw new NotFoundException(
+        `No active enrollments found for subject ${subjectId}`,
+      );
     }
 
     return enrollments;
   }
 
-  findByAcademicPeriod(academicYear: number, semester: number): StudentSubject[] {
+  findByAcademicPeriod(
+    academicYear: number,
+    semester: number,
+  ): StudentSubject[] {
     return this.studentSubjects.filter(
       (enrollment) =>
         enrollment.academicYear === academicYear &&
@@ -82,28 +90,42 @@ export class StudentSubjectsService {
     );
 
     if (!studentSubject) {
-      throw new NotFoundException(`Student-Subject enrollment with ID ${id} not found`);
+      throw new NotFoundException(
+        `Student-Subject enrollment with ID ${id} not found`,
+      );
     }
 
     return studentSubject;
   }
 
-  update(id: number, updateStudentSubjectDto: UpdateStudentSubjectDto): StudentSubject {
+  update(
+    id: number,
+    updateStudentSubjectDto: UpdateStudentSubjectDto,
+  ): StudentSubject {
     const enrollmentIndex = this.studentSubjects.findIndex(
       (enrollment) => enrollment.id === id && enrollment.status,
     );
 
     if (enrollmentIndex === -1) {
-      throw new NotFoundException(`Student-Subject enrollment with ID ${id} not found`);
+      throw new NotFoundException(
+        `Student-Subject enrollment with ID ${id} not found`,
+      );
     }
 
     // If updating student or subject IDs, check for conflicts
-    if (updateStudentSubjectDto.studentId || updateStudentSubjectDto.subjectId) {
+    if (
+      updateStudentSubjectDto.studentId ||
+      updateStudentSubjectDto.subjectId
+    ) {
       const currentEnrollment = this.studentSubjects[enrollmentIndex];
-      const newStudentId = updateStudentSubjectDto.studentId || currentEnrollment.studentId;
-      const newSubjectId = updateStudentSubjectDto.subjectId || currentEnrollment.subjectId;
-      const newAcademicYear = updateStudentSubjectDto.academicYear || currentEnrollment.academicYear;
-      const newSemester = updateStudentSubjectDto.semester || currentEnrollment.semester;
+      const newStudentId =
+        updateStudentSubjectDto.studentId || currentEnrollment.studentId;
+      const newSubjectId =
+        updateStudentSubjectDto.subjectId || currentEnrollment.subjectId;
+      const newAcademicYear =
+        updateStudentSubjectDto.academicYear || currentEnrollment.academicYear;
+      const newSemester =
+        updateStudentSubjectDto.semester || currentEnrollment.semester;
 
       const existingEnrollment = this.studentSubjects.find(
         (enrollment) =>
@@ -136,7 +158,9 @@ export class StudentSubjectsService {
     );
 
     if (enrollmentIndex === -1) {
-      throw new NotFoundException(`Student-Subject enrollment with ID ${id} not found`);
+      throw new NotFoundException(
+        `Student-Subject enrollment with ID ${id} not found`,
+      );
     }
 
     // Soft delete - mark as inactive
@@ -157,7 +181,9 @@ export class StudentSubjectsService {
     );
 
     if (enrollmentIndex === -1) {
-      throw new NotFoundException(`Student-Subject enrollment with ID ${id} not found`);
+      throw new NotFoundException(
+        `Student-Subject enrollment with ID ${id} not found`,
+      );
     }
 
     this.studentSubjects[enrollmentIndex].finalGrade = finalGrade;
