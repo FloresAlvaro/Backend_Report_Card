@@ -18,6 +18,27 @@ export class Subject {
   })
   status: boolean;
 
+  @ApiProperty({
+    description: 'ID of the teacher assigned to this subject',
+    example: 1,
+    required: false,
+  })
+  teacherId?: number;
+
+  @ApiProperty({
+    description: 'Description of the subject content',
+    example: 'Advanced mathematics including algebra and geometry',
+    required: false,
+  })
+  description?: string;
+
+  @ApiProperty({
+    description: 'Number of hours per week for this subject',
+    example: 4,
+    required: false,
+  })
+  hoursPerWeek?: number;
+
   constructor(partial: Partial<Subject> = {}) {
     Object.assign(this, partial);
     if (this.status === undefined) {

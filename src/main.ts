@@ -5,6 +5,7 @@ import { UsersModule } from './users/users.module';
 import { RolesModule } from './roles/roles.module';
 import { GradesModule } from './grades/grades.module';
 import { SubjectsModule } from './subjects/subjects.module';
+import { StudentSubjectsModule } from './student-subjects/student-subjects.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -26,11 +27,12 @@ async function bootstrap() {
     .addTag('Roles', 'Role management endpoints')
     .addTag('Grades', 'Grade management endpoints')
     .addTag('Subjects', 'Subject management endpoints')
+    .addTag('Student-Subjects', 'Student-Subject enrollment management endpoints')
     .build();
 
   // Crear documento con todos los módulos principales
   const document = SwaggerModule.createDocument(app, config, {
-    include: [UsersModule, RolesModule, GradesModule, SubjectsModule],
+    include: [UsersModule, RolesModule, GradesModule, SubjectsModule, StudentSubjectsModule],
   });
 
   SwaggerModule.setup('api', app, document);
