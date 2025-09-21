@@ -5,6 +5,8 @@ import { RolesModule } from '../roles/roles.module';
 import { GradesModule } from '../grades/grades.module';
 import { SubjectsModule } from '../subjects/subjects.module';
 import { UsersModule } from '../users/users.module';
+import { TeachersModule } from '../teachers/teachers.module';
+import { StudentsModule } from '../students/students.module';
 import { StudentSubjectsModule } from '../student-subjects/student-subjects.module';
 
 @Module({
@@ -13,6 +15,8 @@ import { StudentSubjectsModule } from '../student-subjects/student-subjects.modu
     GradesModule,
     SubjectsModule,
     UsersModule,
+    TeachersModule,
+    StudentsModule,
     StudentSubjectsModule,
   ],
   controllers: [SeedController],

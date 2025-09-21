@@ -3,6 +3,8 @@ import { RolesService } from '../roles/roles.service';
 import { GradesService } from '../grades/grades.service';
 import { SubjectsService } from '../subjects/subjects.service';
 import { UsersService } from '../users/users.service';
+import { TeachersService } from '../teachers/teachers.service';
+import { StudentsService } from '../students/students.service';
 import { StudentSubjectsService } from '../student-subjects/student-subjects.service';
 
 @Injectable()
@@ -14,6 +16,8 @@ export class SeedService {
     private readonly gradesService: GradesService,
     private readonly subjectsService: SubjectsService,
     private readonly usersService: UsersService,
+    private readonly teachersService: TeachersService,
+    private readonly studentsService: StudentsService,
     private readonly studentSubjectsService: StudentSubjectsService,
   ) {}
 
@@ -252,7 +256,7 @@ export class SeedService {
 
     for (const teacher of teachers) {
       try {
-        this.usersService.createTeacher(teacher);
+        this.teachersService.create(teacher);
         this.logger.log(`   ✓ Created teacher: ${teacher.name}`);
       } catch {
         this.logger.log(
@@ -269,7 +273,7 @@ export class SeedService {
         password: 'student123',
         roleId: studentRole.id,
         enrollmentNumber: 'EST-2024-001',
-        dateOfBirth: '2010-05-15',
+        dateOfBirth: new Date('2010-05-15'),
         guardianName: 'Pedro Pérez',
         guardianPhone: '+1234567101',
         guardianEmail: 'pedro.perez@parent.com',
@@ -283,7 +287,7 @@ export class SeedService {
         password: 'student123',
         roleId: studentRole.id,
         enrollmentNumber: 'EST-2024-002',
-        dateOfBirth: '2011-08-22',
+        dateOfBirth: new Date('2011-08-22'),
         guardianName: 'Ana López',
         guardianPhone: '+1234567102',
         guardianEmail: 'ana.lopez@parent.com',
@@ -297,7 +301,7 @@ export class SeedService {
         password: 'student123',
         roleId: studentRole.id,
         enrollmentNumber: 'EST-2024-003',
-        dateOfBirth: '2009-12-10',
+        dateOfBirth: new Date('2009-12-10'),
         guardianName: 'Luis Fernández',
         guardianPhone: '+1234567103',
         guardianEmail: 'luis.fernandez@parent.com',
@@ -309,7 +313,7 @@ export class SeedService {
 
     for (const student of students) {
       try {
-        this.usersService.createStudent(student);
+        this.studentsService.create(student);
         this.logger.log(`   ✓ Created student: ${student.name}`);
       } catch {
         this.logger.log(
@@ -323,7 +327,7 @@ export class SeedService {
     this.logger.log('🔗 Seeding student-subject enrollments...');
 
     // Get students and subjects
-    const students = this.usersService.findAllStudents();
+    const students = this.studentsService.findAll();
     const subjects = this.subjectsService.findAllSubjects();
 
     if (students.length === 0 || subjects.length === 0) {
