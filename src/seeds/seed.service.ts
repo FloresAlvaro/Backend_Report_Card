@@ -87,16 +87,46 @@ export class SeedService {
     this.logger.log('🎓 Seeding grades...');
 
     const grades = [
-      { level: 'Preescolar' },
-      { level: '1° Primaria' },
-      { level: '2° Primaria' },
-      { level: '3° Primaria' },
-      { level: '4° Primaria' },
-      { level: '5° Primaria' },
-      { level: '6° Primaria' },
-      { level: '1° Secundaria' },
-      { level: '2° Secundaria' },
-      { level: '3° Secundaria' },
+      {
+        level: 'Preescolar',
+        description: 'Educación preescolar para niños de 3-5 años',
+      },
+      {
+        level: '1° Primaria',
+        description: 'Primer grado de educación primaria',
+      },
+      {
+        level: '2° Primaria',
+        description: 'Segundo grado de educación primaria',
+      },
+      {
+        level: '3° Primaria',
+        description: 'Tercer grado de educación primaria',
+      },
+      {
+        level: '4° Primaria',
+        description: 'Cuarto grado de educación primaria',
+      },
+      {
+        level: '5° Primaria',
+        description: 'Quinto grado de educación primaria',
+      },
+      {
+        level: '6° Primaria',
+        description: 'Sexto grado de educación primaria',
+      },
+      {
+        level: '1° Secundaria',
+        description: 'Primer grado de educación secundaria',
+      },
+      {
+        level: '2° Secundaria',
+        description: 'Segundo grado de educación secundaria',
+      },
+      {
+        level: '3° Secundaria',
+        description: 'Tercer grado de educación secundaria',
+      },
     ];
 
     for (const grade of grades) {
