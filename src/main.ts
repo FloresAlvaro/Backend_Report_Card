@@ -6,6 +6,7 @@ import { RolesModule } from './roles/roles.module';
 import { GradesModule } from './grades/grades.module';
 import { SubjectsModule } from './subjects/subjects.module';
 import { StudentSubjectsModule } from './student-subjects/student-subjects.module';
+import { SeedModule } from './seeds/seed.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -31,6 +32,7 @@ async function bootstrap() {
       'Student-Subjects',
       'Student-Subject enrollment management endpoints',
     )
+    .addTag('Seeds', 'Database seeding endpoints for sample data')
     .build();
 
   // Crear documento con todos los módulos principales
@@ -41,6 +43,7 @@ async function bootstrap() {
       GradesModule,
       SubjectsModule,
       StudentSubjectsModule,
+      SeedModule,
     ],
   });
 
