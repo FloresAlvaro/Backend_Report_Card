@@ -7,7 +7,6 @@ import { SubjectsModule } from '../subjects/subjects.module';
 import { UsersModule } from '../users/users.module';
 import { TeachersModule } from '../teachers/teachers.module';
 import { StudentsModule } from '../students/students.module';
-import { StudentSubjectsModule } from '../student-subjects/student-subjects.module';
 
 @Module({
   imports: [
@@ -17,7 +16,6 @@ import { StudentSubjectsModule } from '../student-subjects/student-subjects.modu
     UsersModule,
     TeachersModule,
     StudentsModule,
-    StudentSubjectsModule,
   ],
   controllers: [SeedController],
   providers: [SeedService],

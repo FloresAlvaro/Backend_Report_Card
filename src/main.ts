@@ -7,7 +7,6 @@ import { GradesModule } from './grades/grades.module';
 import { SubjectsModule } from './subjects/subjects.module';
 import { TeachersModule } from './teachers/teachers.module';
 import { StudentsModule } from './students/students.module';
-import { StudentSubjectsModule } from './student-subjects/student-subjects.module';
 import { SeedModule } from './seeds/seed.module';
 
 async function bootstrap() {
@@ -32,10 +31,6 @@ async function bootstrap() {
     .addTag('Subjects', 'Subject management endpoints')
     .addTag('Teachers', 'Teacher management endpoints')
     .addTag('Students', 'Student management endpoints')
-    .addTag(
-      'Student-Subjects',
-      'Student-Subject enrollment management endpoints',
-    )
     .addTag('Seeds', 'Database seeding endpoints for sample data')
     .build();
 
@@ -48,7 +43,6 @@ async function bootstrap() {
       SubjectsModule,
       TeachersModule,
       StudentsModule,
-      StudentSubjectsModule,
       SeedModule,
     ],
   });

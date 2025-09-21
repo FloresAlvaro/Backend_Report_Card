@@ -5,7 +5,6 @@ import { SubjectsService } from '../subjects/subjects.service';
 import { UsersService } from '../users/users.service';
 import { TeachersService } from '../teachers/teachers.service';
 import { StudentsService } from '../students/students.service';
-import { StudentSubjectsService } from '../student-subjects/student-subjects.service';
 
 @Injectable()
 export class SeedService {
@@ -18,7 +17,6 @@ export class SeedService {
     private readonly usersService: UsersService,
     private readonly teachersService: TeachersService,
     private readonly studentsService: StudentsService,
-    private readonly studentSubjectsService: StudentSubjectsService,
   ) {}
 
   seedAll(): void {
@@ -30,7 +28,6 @@ export class SeedService {
       this.seedGrades();
       this.seedSubjects();
       this.seedUsers();
-      this.seedStudentSubjects();
 
       this.logger.log('✅ Database seeding completed successfully!');
     } catch (error) {
@@ -319,72 +316,6 @@ export class SeedService {
         this.logger.log(
           `   ⚠ Student ${student.email} already exists, skipping...`,
         );
-      }
-    }
-  }
-
-  private seedStudentSubjects(): void {
-    this.logger.log('🔗 Seeding student-subject enrollments...');
-
-    // Get students and subjects
-    const students = this.studentsService.findAll();
-    const subjects = this.subjectsService.findAllSubjects();
-
-    if (students.length === 0 || subjects.length === 0) {
-      this.logger.log(
-        '   ⚠ No students or subjects found, skipping enrollments...',
-      );
-      return;
-    }
-
-    // Create sample enrollments
-    const enrollments = [
-      {
-        studentId: students[0]?.id,
-        subjectId: subjects[0]?.id, // Matemáticas
-        enrollmentDate: new Date('2024-02-01'),
-        status: 'active',
-        academicYear: 2024,
-        semester: 1,
-      },
-      {
-        studentId: students[0]?.id,
-        subjectId: subjects[1]?.id, // Lengua y Literatura
-        enrollmentDate: new Date('2024-02-01'),
-        status: 'active',
-        academicYear: 2024,
-        semester: 1,
-      },
-      {
-        studentId: students[1]?.id,
-        subjectId: subjects[0]?.id, // Matemáticas
-        enrollmentDate: new Date('2024-02-01'),
-        status: 'active',
-        academicYear: 2024,
-        semester: 1,
-      },
-      {
-        studentId: students[1]?.id,
-        subjectId: subjects[2]?.id, // Ciencias Naturales
-        enrollmentDate: new Date('2024-02-01'),
-        status: 'completed',
-        academicYear: 2024,
-        semester: 1,
-        finalGrade: 85,
-        completionDate: new Date('2024-06-15'),
-      },
-    ];
-
-    for (const enrollment of enrollments) {
-      if (enrollment.studentId && enrollment.subjectId) {
-        try {
-          this.studentSubjectsService.create(enrollment);
-          this.logger.log(
-            `   ✓ Created enrollment for student ${enrollment.studentId} in subject ${enrollment.subjectId}`,
-          );
-        } catch {
-          this.logger.log(`   ⚠ Enrollment already exists, skipping...`);
-        }
       }
     }
   }

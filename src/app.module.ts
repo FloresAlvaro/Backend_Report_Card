@@ -7,7 +7,6 @@ import { TeachersModule } from './teachers/teachers.module';
 import { StudentsModule } from './students/students.module';
 import { GradesModule } from './grades/grades.module';
 import { SubjectsModule } from './subjects/subjects.module';
-import { StudentSubjectsModule } from './student-subjects/student-subjects.module';
 import { SeedModule } from './seeds/seed.module';
 
 @Module({
@@ -18,7 +17,6 @@ import { SeedModule } from './seeds/seed.module';
     StudentsModule,
     GradesModule,
     SubjectsModule,
-    StudentSubjectsModule,
     SeedModule,
   ],
   controllers: [AppController],
