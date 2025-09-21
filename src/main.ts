@@ -3,6 +3,7 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import { UsersModule } from './users/users.module';
 import { RolesModule } from './roles/roles.module';
+import { GradesModule } from './grades/grades.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -22,11 +23,12 @@ async function bootstrap() {
     .setVersion('1.0')
     .addTag('Users', 'User management endpoints')
     .addTag('Roles', 'Role management endpoints')
+    .addTag('Grades', 'Grade management endpoints')
     .build();
 
   // Crear documento solo con los módulos de Users y Roles
   const document = SwaggerModule.createDocument(app, config, {
-    include: [UsersModule, RolesModule],
+    include: [UsersModule, RolesModule, GradesModule],
   });
 
   SwaggerModule.setup('api', app, document);
