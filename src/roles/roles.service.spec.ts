@@ -1,253 +1,695 @@
-import { Test, TestingModule } from '@nestjs/testing';
+import { Test, TestingModule } from '@nestjs/testing';import { Test, TestingModule } from '@nestjs/testing';import { Test, TestingModule } from '@nestjs/testing';
+
 import { NotFoundException, ConflictException } from '@nestjs/common';
-import { RolesService } from './roles.service';
+
+import { RolesService } from './roles.service';import { NotFoundException, ConflictException } from '@nestjs/common';import { NotFoundException, ConflictException } from '@nestjs/common';
+
 import { CreateRoleDto } from './dto/create-role.dto';
-import { UpdateRoleDto } from './dto/update-role.dto';
+
+import { UpdateRoleDto } from './dto/update-role.dto';import { RolesService } from './roles.service';import { RolesService } from './roles.service';
+
+import { PrismaService } from '../prisma/prisma.service';
+
+import { CreateRoleDto } from './dto/create-role.dto';import { CreateRoleDto } from './dto/create-role.dto';
 
 describe('RolesService', () => {
-  let service: RolesService;
+
+  let service: RolesService;import { UpdateRoleDto } from './dto/update-role.dto';import { UpdateRoleDto } from './dto/update-role.dto';
+
+  let prismaService: PrismaService;
+
+import { PrismaService } from '../prisma/prisma.service';
 
   beforeEach(async () => {
+
+    const mockPrismaService = {describe('RolesService', () => {
+
+      role: {
+
+        findFirst: jest.fn(),describe('RolesService', () => {  let service: RolesService;
+
+        create: jest.fn(),
+
+        findMany: jest.fn(),  let service: RolesService;
+
+        update: jest.fn(),
+
+      },  let prismaService: PrismaService;  beforeEach(async () => {
+
+    };
+
     const module: TestingModule = await Test.createTestingModule({
-      providers: [RolesService],
+
+    const module: TestingModule = await Test.createTestingModule({
+
+      providers: [  beforeEach(async () => {      providers: [RolesService],
+
+        RolesService,
+
+        {    const mockPrismaService = {    }).compile();
+
+          provide: PrismaService,
+
+          useValue: mockPrismaService,      role: {
+
+        },
+
+      ],        findFirst: jest.fn(),    service = module.get<RolesService>(RolesService);
+
     }).compile();
 
+        create: jest.fn(),  });
+
     service = module.get<RolesService>(RolesService);
+
+    prismaService = module.get<PrismaService>(PrismaService);        findMany: jest.fn(),
+
   });
+
+        update: jest.fn(),  it('should be defined', () => {
 
   it('should be defined', () => {
-    expect(service).toBeDefined();
+
+    expect(service).toBeDefined();      },    expect(service).toBeDefined();
+
   });
 
-  describe('create', () => {
-    it('should create an admin role successfully', () => {
-      // Arrange
+    };  });
+
+  describe('createRole', () => {
+
+    it('should create an admin role successfully', async () => {
+
       const createAdminDto: CreateRoleDto = {
-        name: 'admin',
+
+        name: 'admin',    const module: TestingModule = await Test.createTestingModule({  describe('create', () => {
+
         status: true,
-      };
 
-      // Act
-      const result = service.createRole(createAdminDto);
+      };      providers: [    it('should create an admin role successfully', async () => {
 
-      // Assert
+
+
+      const mockDbRole = {        RolesService,      // Arrange
+
+        roleID: 1,
+
+        roleName: 'admin',        {      const createAdminDto: CreateRoleDto = {
+
+        roleStatus: true,
+
+      };          provide: PrismaService,        name: 'admin',
+
+
+
+      (prismaService.role.findFirst as jest.Mock).mockResolvedValue(null);          useValue: mockPrismaService,        status: true,
+
+      (prismaService.role.create as jest.Mock).mockResolvedValue(mockDbRole);
+
+        },      };
+
+      const result = await service.createRole(createAdminDto);
+
+      ],
+
       expect(result).toBeDefined();
-      expect(result.id).toBe(1); // First role should have ID 1
+
+      expect(result.id).toBe(1);    }).compile();      // Act
+
       expect(result.name).toBe('admin');
-      expect(result.status).toBe(true);
+
+      expect(result.status).toBe(true);      const result = await service.createRole(createAdminDto);
+
     });
 
-    it('should create role with default status when not provided', () => {
-      // Arrange
-      const createRoleDto: CreateRoleDto = {
-        name: 'user',
-      };
+    service = module.get<RolesService>(RolesService);
 
-      // Act
-      const result = service.createRole(createRoleDto);
+    it('should throw ConflictException for duplicate role names', async () => {
 
-      // Assert
-      expect(result.status).toBe(true); // Should default to true
-    });
+      const adminRole: CreateRoleDto = { name: 'admin', status: true };    prismaService = module.get<PrismaService>(PrismaService);      // Assert
 
-    it('should auto-increment IDs for multiple roles', () => {
-      // Arrange
-      const adminRole: CreateRoleDto = { name: 'admin', status: true };
-      const userRole: CreateRoleDto = { name: 'user', status: true };
-      const moderatorRole: CreateRoleDto = { name: 'moderator', status: true };
 
-      // Act
-      const role1 = service.createRole(adminRole);
-      const role2 = service.createRole(userRole);
-      const role3 = service.createRole(moderatorRole);
 
-      // Assert
-      expect(role1.id).toBe(1);
-      expect(role2.id).toBe(2);
-      expect(role3.id).toBe(3);
-    });
+      const mockExistingRole = {  });      expect(result).toBeDefined();
 
-    it('should throw ConflictException for duplicate role names', () => {
-      // Arrange
-      const adminRole: CreateRoleDto = { name: 'admin', status: true };
-      service.createRole(adminRole);
+        roleID: 1,
 
-      const duplicateAdminRole: CreateRoleDto = { name: 'ADMIN', status: true };
+        roleName: 'admin',      expect(result.id).toBe(1); // First role should have ID 1
 
-      // Act & Assert
-      expect(() => service.createRole(duplicateAdminRole)).toThrow(
+        roleStatus: true,
+
+      };  it('should be defined', () => {      expect(result.name).toBe('admin');
+
+
+
+      (prismaService.role.findFirst as jest.Mock).mockResolvedValue(    expect(service).toBeDefined();      expect(result.status).toBe(true);
+
+        mockExistingRole,
+
+      );  });    });
+
+
+
+      await expect(service.createRole(adminRole)).rejects.toThrow(
+
         ConflictException,
-      );
+
+      );  describe('createRole', () => {    it('should create role with default status when not provided', async () => {
+
     });
+
+  });    it('should create an admin role successfully', async () => {      // Arrange
+
+
+
+  describe('findAllRoles', () => {      // Arrange      const createRoleDto: CreateRoleDto = {
+
+    it('should return empty array when no roles exist', async () => {
+
+      (prismaService.role.findMany as jest.Mock).mockResolvedValue([]);      const createAdminDto: CreateRoleDto = {        name: 'user',
+
+
+
+      const result = await service.findAllRoles();        name: 'admin',      };
+
+
+
+      expect(result).toEqual([]);        status: true,
+
+    });
+
+  });      };      // Act
+
+
+
+  describe('findOneRole', () => {      const result = await service.createRole(createRoleDto);
+
+    it('should find and return an admin role by ID', async () => {
+
+      const mockDbRole = {      const mockDbRole = {
+
+        roleID: 1,
+
+        roleName: 'admin',        roleID: 1,      // Assert
+
+        roleStatus: true,
+
+      };        roleName: 'admin',      expect(result.status).toBe(true); // Should default to true
+
+
+
+      (prismaService.role.findFirst as jest.Mock).mockResolvedValue(mockDbRole);        roleStatus: true,    });
+
+
+
+      const result = await service.findOneRole(1);      };
+
+
+
+      expect(result.id).toBe(1);    it('should auto-increment IDs for multiple roles', async () => {
+
+      expect(result.name).toBe('admin');
+
+      expect(result.status).toBe(true);      (prismaService.role.findFirst as jest.Mock).mockResolvedValue(null);      // Arrange
+
+    });
+
+      (prismaService.role.create as jest.Mock).mockResolvedValue(mockDbRole);      const adminRole: CreateRoleDto = { name: 'admin', status: true };
+
+    it('should throw NotFoundException when role does not exist', async () => {
+
+      (prismaService.role.findFirst as jest.Mock).mockResolvedValue(null);      const userRole: CreateRoleDto = { name: 'user', status: true };
+
+
+
+      await expect(service.findOneRole(999)).rejects.toThrow(      // Act      const moderatorRole: CreateRoleDto = { name: 'moderator', status: true };
+
+        NotFoundException,
+
+      );      const result = await service.createRole(createAdminDto);
+
+    });
+
+  });      // Act
+
+
+
+  describe('updateRole', () => {      // Assert      const role1 = await service.createRole(adminRole);
+
+    it('should update an admin role successfully', async () => {
+
+      const updateDto: UpdateRoleDto = { name: 'super-admin', status: true };      expect(result).toBeDefined();      const role2 = await service.createRole(userRole);
+
+
+
+      const mockExistingRole = {      expect(result.id).toBe(1);      const role3 = await service.createRole(moderatorRole);
+
+        roleID: 1,
+
+        roleName: 'admin',      expect(result.name).toBe('admin');
+
+        roleStatus: true,
+
+      };      expect(result.status).toBe(true);      // Assert
+
+
+
+      const mockUpdatedRole = {    });      expect(role1.id).toBe(1);
+
+        roleID: 1,
+
+        roleName: 'super-admin',      expect(role2.id).toBe(2);
+
+        roleStatus: true,
+
+      };    it('should create role with default status when not provided', async () => {      expect(role3.id).toBe(3);
+
+
+
+      (prismaService.role.findFirst as jest.Mock).mockResolvedValue(      // Arrange    });
+
+        mockExistingRole,
+
+      );      const createRoleDto: CreateRoleDto = {
+
+      (prismaService.role.update as jest.Mock).mockResolvedValue(
+
+        mockUpdatedRole,        name: 'user',    it('should throw ConflictException for duplicate role names', async () => {
+
+      );
+
+      };      // Arrange
+
+      const result = await service.updateRole(1, updateDto);
+
+      const adminRole: CreateRoleDto = { name: 'admin', status: true };
+
+      expect(result.id).toBe(1);
+
+      expect(result.name).toBe('super-admin');      const mockDbRole = {      await service.createRole(adminRole);
+
+      expect(result.status).toBe(true);
+
+    });        roleID: 1,
+
+
+
+    it('should throw NotFoundException when updating non-existent role', async () => {        roleName: 'user',      const duplicateAdminRole: CreateRoleDto = { name: 'ADMIN', status: true };
+
+      const updateDto: UpdateRoleDto = { name: 'updated-role' };
+
+        roleStatus: true,
+
+      (prismaService.role.findFirst as jest.Mock).mockResolvedValue(null);
+
+      };      // Act & Assert
+
+      await expect(service.updateRole(999, updateDto)).rejects.toThrow(
+
+        NotFoundException,      await expect(service.createRole(duplicateAdminRole)).rejects.toThrow(
+
+      );
+
+    });      (prismaService.role.findFirst as jest.Mock).mockResolvedValue(null);        ConflictException,
+
   });
+
+      (prismaService.role.create as jest.Mock).mockResolvedValue(mockDbRole);      );
+
+  describe('deleteRole', () => {
+
+    it('should soft delete a role successfully', async () => {    });
+
+      const mockExistingRole = {
+
+        roleID: 1,      // Act  });
+
+        roleName: 'admin',
+
+        roleStatus: true,      const result = await service.createRole(createRoleDto);
+
+      };
 
   describe('findAllRoles', () => {
-    it('should return empty array when no roles exist', () => {
-      // Act
-      const result = service.findAllRoles();
 
-      // Assert
-      expect(result).toEqual([]);
+      const mockUpdatedRole = {
+
+        roleID: 1,      // Assert    it('should return empty array when no roles exist', () => {
+
+        roleName: 'admin',
+
+        roleStatus: false,      expect(result.status).toBe(true);      // Act
+
+      };
+
+    });      const result = service.findAllRoles();
+
+      (prismaService.role.findFirst as jest.Mock).mockResolvedValue(
+
+        mockExistingRole,
+
+      );
+
+      (prismaService.role.update as jest.Mock).mockResolvedValue(    it('should throw ConflictException for duplicate role names', async () => {      // Assert
+
+        mockUpdatedRole,
+
+      );      // Arrange      expect(result).toEqual([]);
+
+
+
+      const result = await service.deleteRole(1);      const adminRole: CreateRoleDto = { name: 'admin', status: true };    });
+
+
+
+      expect(result.message).toBe('Role with ID 1 has been removed');
+
     });
 
-    it('should return only active roles', () => {
-      // Arrange
-      const activeAdminRole: CreateRoleDto = { name: 'admin', status: true };
-      const inactiveUserRole: CreateRoleDto = { name: 'user', status: false };
+      const mockExistingRole = {    it('should return only active roles', () => {
 
+    it('should throw NotFoundException when deleting non-existent role', async () => {
+
+      (prismaService.role.findFirst as jest.Mock).mockResolvedValue(null);        roleID: 1,      // Arrange
+
+
+
+      await expect(service.deleteRole(999)).rejects.toThrow(        roleName: 'admin',      const activeAdminRole: CreateRoleDto = { name: 'admin', status: true };
+
+        NotFoundException,
+
+      );        roleStatus: true,      const inactiveUserRole: CreateRoleDto = { name: 'user', status: false };
+
+    });
+
+  });      };
+
+});
       service.createRole(activeAdminRole);
-      service.createRole(inactiveUserRole);
 
-      // Act
-      const result = service.findAllRoles();
+      (prismaService.role.findFirst as jest.Mock).mockResolvedValue(mockExistingRole);      service.createRole(inactiveUserRole);
 
-      // Assert
-      expect(result).toHaveLength(1);
-      expect(result[0].name).toBe('admin');
+
+
+      // Act & Assert      // Act
+
+      await expect(service.createRole(adminRole)).rejects.toThrow(      const result = service.findAllRoles();
+
+        ConflictException,
+
+      );      // Assert
+
+    });      expect(result).toHaveLength(1);
+
+  });      expect(result[0].name).toBe('admin');
+
       expect(result[0].status).toBe(true);
-    });
 
-    it('should return multiple active roles including admin', () => {
-      // Arrange
+  describe('findAllRoles', () => {    });
+
+    it('should return empty array when no roles exist', async () => {
+
+      // Arrange    it('should return multiple active roles including admin', () => {
+
+      (prismaService.role.findMany as jest.Mock).mockResolvedValue([]);      // Arrange
+
       const roles = [
-        { name: 'admin', status: true },
-        { name: 'user', status: true },
+
+      // Act        { name: 'admin', status: true },
+
+      const result = await service.findAllRoles();        { name: 'user', status: true },
+
         { name: 'guest', status: false }, // This should not appear in results
-        { name: 'moderator', status: true },
-      ];
+
+      // Assert        { name: 'moderator', status: true },
+
+      expect(result).toEqual([]);      ];
+
+    });
 
       roles.forEach((role) => service.createRole(role));
 
-      // Act
-      const result = service.findAllRoles();
+    it('should return only active roles', async () => {
 
-      // Assert
-      expect(result).toHaveLength(3); // Only active roles
-      expect(result.find((role) => role.name === 'admin')).toBeDefined();
-      expect(result.find((role) => role.name === 'user')).toBeDefined();
-      expect(result.find((role) => role.name === 'moderator')).toBeDefined();
+      // Arrange      // Act
+
+      const mockDbRoles = [      const result = service.findAllRoles();
+
+        {
+
+          roleID: 1,      // Assert
+
+          roleName: 'admin',      expect(result).toHaveLength(3); // Only active roles
+
+          roleStatus: true,      expect(result.find((role) => role.name === 'admin')).toBeDefined();
+
+        },      expect(result.find((role) => role.name === 'user')).toBeDefined();
+
+      ];      expect(result.find((role) => role.name === 'moderator')).toBeDefined();
+
       expect(result.find((role) => role.name === 'guest')).toBeUndefined();
-    });
+
+      (prismaService.role.findMany as jest.Mock).mockResolvedValue(mockDbRoles);    });
+
   });
 
-  describe('findOneRole', () => {
-    it('should find admin role by ID', () => {
-      // Arrange
-      const adminRole: CreateRoleDto = { name: 'admin', status: true };
-      const createdRole = service.createRole(adminRole);
-
       // Act
-      const result = service.findOneRole(createdRole.id);
+
+      const result = await service.findAllRoles();  describe('findOneRole', () => {
+
+    it('should find admin role by ID', () => {
+
+      // Assert      // Arrange
+
+      expect(result).toHaveLength(1);      const adminRole: CreateRoleDto = { name: 'admin', status: true };
+
+      expect(result[0].name).toBe('admin');      const createdRole = service.createRole(adminRole);
+
+      expect(result[0].status).toBe(true);
+
+    });      // Act
+
+  });      const result = service.findOneRole(createdRole.id);
+
+
+
+  describe('findOneRole', () => {      // Assert
+
+    it('should find and return an admin role by ID', async () => {      expect(result).toBeDefined();
+
+      // Arrange      expect(result.id).toBe(createdRole.id);
+
+      const mockDbRole = {      expect(result.name).toBe('admin');
+
+        roleID: 1,      expect(result.status).toBe(true);
+
+        roleName: 'admin',    });
+
+        roleStatus: true,
+
+      };    it('should throw NotFoundException for non-existent role', () => {
+
+      // Act & Assert
+
+      (prismaService.role.findFirst as jest.Mock).mockResolvedValue(mockDbRole);      expect(() => service.findOneRole(999)).toThrow(NotFoundException);
+
+      expect(() => service.findOneRole(999)).toThrow(
+
+      // Act        'Role with ID 999 not found',
+
+      const result = await service.findOneRole(1);      );
+
+    });
 
       // Assert
-      expect(result).toBeDefined();
-      expect(result.id).toBe(createdRole.id);
-      expect(result.name).toBe('admin');
-      expect(result.status).toBe(true);
-    });
 
-    it('should throw NotFoundException for non-existent role', () => {
-      // Act & Assert
-      expect(() => service.findOneRole(999)).toThrow(NotFoundException);
-      expect(() => service.findOneRole(999)).toThrow(
-        'Role with ID 999 not found',
-      );
-    });
+      expect(result.id).toBe(1);    it('should throw NotFoundException for inactive role', () => {
 
-    it('should throw NotFoundException for inactive role', () => {
-      // Arrange
-      const inactiveRole: CreateRoleDto = {
-        name: 'inactive-admin',
+      expect(result.name).toBe('admin');      // Arrange
+
+      expect(result.status).toBe(true);      const inactiveRole: CreateRoleDto = {
+
+    });        name: 'inactive-admin',
+
         status: false,
-      };
-      const createdRole = service.createRole(inactiveRole);
+
+    it('should throw NotFoundException when role does not exist', async () => {      };
+
+      // Arrange      const createdRole = service.createRole(inactiveRole);
+
+      (prismaService.role.findFirst as jest.Mock).mockResolvedValue(null);
 
       // Act & Assert
-      expect(() => service.findOneRole(createdRole.id)).toThrow(
-        NotFoundException,
-      );
-    });
+
+      // Act & Assert      expect(() => service.findOneRole(createdRole.id)).toThrow(
+
+      await expect(service.findOneRole(999)).rejects.toThrow(        NotFoundException,
+
+        NotFoundException,      );
+
+      );    });
+
+    });  });
+
   });
 
   describe('updateRole', () => {
-    it('should update admin role status', () => {
-      // Arrange
-      const adminRole: CreateRoleDto = { name: 'admin', status: true };
-      const createdRole = service.createRole(adminRole);
 
-      const updateDto: UpdateRoleDto = { status: false };
+  describe('updateRole', () => {    it('should update admin role status', () => {
 
-      // Act
-      const result = service.updateRole(createdRole.id, updateDto);
+    it('should update an admin role successfully', async () => {      // Arrange
+
+      // Arrange      const adminRole: CreateRoleDto = { name: 'admin', status: true };
+
+      const updateDto: UpdateRoleDto = { name: 'super-admin', status: true };      const createdRole = service.createRole(adminRole);
+
+
+
+      const mockExistingRole = {      const updateDto: UpdateRoleDto = { status: false };
+
+        roleID: 1,
+
+        roleName: 'admin',      // Act
+
+        roleStatus: true,      const result = service.updateRole(createdRole.id, updateDto);
+
+      };
 
       // Assert
-      expect(result.id).toBe(createdRole.id);
-      expect(result.name).toBe('admin'); // Name should remain unchanged
-      expect(result.status).toBe(false); // Status should be updated
-    });
+
+      const mockUpdatedRole = {      expect(result.id).toBe(createdRole.id);
+
+        roleID: 1,      expect(result.name).toBe('admin'); // Name should remain unchanged
+
+        roleName: 'super-admin',      expect(result.status).toBe(false); // Status should be updated
+
+        roleStatus: true,    });
+
+      };
 
     it('should update admin role name', () => {
-      // Arrange
-      const adminRole: CreateRoleDto = { name: 'admin', status: true };
+
+      (prismaService.role.findFirst as jest.Mock).mockResolvedValue(mockExistingRole);      // Arrange
+
+      (prismaService.role.update as jest.Mock).mockResolvedValue(mockUpdatedRole);      const adminRole: CreateRoleDto = { name: 'admin', status: true };
+
       const createdRole = service.createRole(adminRole);
-      const updateDto: UpdateRoleDto = { name: 'super-admin' };
+
+      // Act      const updateDto: UpdateRoleDto = { name: 'super-admin' };
+
+      const result = await service.updateRole(1, updateDto);
 
       // Act
-      const result = service.updateRole(createdRole.id, updateDto);
 
-      // Assert
-      expect(result.id).toBe(createdRole.id);
-      expect(result.name).toBe('super-admin'); // Name should be updated
+      // Assert      const result = service.updateRole(createdRole.id, updateDto);
+
+      expect(result.id).toBe(1);
+
+      expect(result.name).toBe('super-admin');      // Assert
+
+      expect(result.status).toBe(true);      expect(result.id).toBe(createdRole.id);
+
+    });      expect(result.name).toBe('super-admin'); // Name should be updated
+
       expect(result.status).toBe(true); // Status should remain unchanged
-    });
 
-    it('should update both name and status for admin role', () => {
+    it('should throw NotFoundException when updating non-existent role', async () => {    });
+
       // Arrange
-      const adminRole: CreateRoleDto = { name: 'admin', status: true };
+
+      const updateDto: UpdateRoleDto = { name: 'updated-role' };    it('should update both name and status for admin role', () => {
+
+      // Arrange
+
+      (prismaService.role.findFirst as jest.Mock).mockResolvedValue(null);      const adminRole: CreateRoleDto = { name: 'admin', status: true };
+
       const createdRole = service.createRole(adminRole);
-      const updateDto: UpdateRoleDto = { name: 'system-admin', status: false };
 
-      // Act
-      const result = service.updateRole(createdRole.id, updateDto);
+      // Act & Assert      const updateDto: UpdateRoleDto = { name: 'system-admin', status: false };
 
-      // Assert
+      await expect(service.updateRole(999, updateDto)).rejects.toThrow(
+
+        NotFoundException,      // Act
+
+      );      const result = service.updateRole(createdRole.id, updateDto);
+
+    });
+
+  });      // Assert
+
       expect(result.name).toBe('system-admin');
-      expect(result.status).toBe(false);
+
+  describe('deleteRole', () => {      expect(result.status).toBe(false);
+
+    it('should soft delete a role successfully', async () => {    });
+
+      // Arrange
+
+      const mockExistingRole = {    it('should throw NotFoundException when updating non-existent role', () => {
+
+        roleID: 1,      // Arrange
+
+        roleName: 'admin',      const updateDto: UpdateRoleDto = { status: false };
+
+        roleStatus: true,
+
+      };      // Act & Assert
+
+      expect(() => service.updateRole(999, updateDto)).toThrow(
+
+      const mockUpdatedRole = {        NotFoundException,
+
+        roleID: 1,      );
+
+        roleName: 'admin',      expect(() => service.updateRole(999, updateDto)).toThrow(
+
+        roleStatus: false,        'Role with ID 999 not found',
+
+      };      );
+
     });
 
-    it('should throw NotFoundException when updating non-existent role', () => {
-      // Arrange
-      const updateDto: UpdateRoleDto = { status: false };
+      (prismaService.role.findFirst as jest.Mock).mockResolvedValue(mockExistingRole);
 
-      // Act & Assert
-      expect(() => service.updateRole(999, updateDto)).toThrow(
-        NotFoundException,
-      );
-      expect(() => service.updateRole(999, updateDto)).toThrow(
-        'Role with ID 999 not found',
-      );
-    });
+      (prismaService.role.update as jest.Mock).mockResolvedValue(mockUpdatedRole);    it('should throw NotFoundException when updating inactive role', () => {
 
-    it('should throw NotFoundException when updating inactive role', () => {
       // Arrange
-      const inactiveRole: CreateRoleDto = {
-        name: 'inactive-admin',
+
+      // Act      const inactiveRole: CreateRoleDto = {
+
+      const result = await service.deleteRole(1);        name: 'inactive-admin',
+
         status: false,
-      };
-      const createdRole = service.createRole(inactiveRole);
-      const updateDto: UpdateRoleDto = { name: 'updated-admin' };
 
-      // Act & Assert
-      expect(() => service.updateRole(createdRole.id, updateDto)).toThrow(
-        NotFoundException,
+      // Assert      };
+
+      expect(result.message).toBe('Role with ID 1 has been removed');      const createdRole = service.createRole(inactiveRole);
+
+    });      const updateDto: UpdateRoleDto = { name: 'updated-admin' };
+
+
+
+    it('should throw NotFoundException when deleting non-existent role', async () => {      // Act & Assert
+
+      // Arrange      expect(() => service.updateRole(createdRole.id, updateDto)).toThrow(
+
+      (prismaService.role.findFirst as jest.Mock).mockResolvedValue(null);        NotFoundException,
+
       );
-    });
 
-    it('should throw ConflictException when updating to duplicate name', () => {
-      // Arrange
-      const adminRole: CreateRoleDto = { name: 'admin', status: true };
-      const userRole: CreateRoleDto = { name: 'user', status: true };
-      service.createRole(adminRole);
+      // Act & Assert    });
+
+      await expect(service.deleteRole(999)).rejects.toThrow(
+
+        NotFoundException,    it('should throw ConflictException when updating to duplicate name', () => {
+
+      );      // Arrange
+
+    });      const adminRole: CreateRoleDto = { name: 'admin', status: true };
+
+  });      const userRole: CreateRoleDto = { name: 'user', status: true };
+
+});      service.createRole(adminRole);
       const createdUserRole = service.createRole(userRole);
 
       const updateDto: UpdateRoleDto = { name: 'admin' };

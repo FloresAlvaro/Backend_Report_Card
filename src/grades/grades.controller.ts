@@ -41,45 +41,32 @@ export class GradesController {
     status: 409,
     description: 'Grade with this level already exists',
   })
-  createGrade(@Body() createGradeDto: CreateGradeDto): Grade {
+  async createGrade(@Body() createGradeDto: CreateGradeDto): Promise<Grade> {
     return this.gradesService.createGrade(createGradeDto);
   }
 
   @Get()
   @ApiOperation({
-    summary: 'Get all active grades',
-    description: 'Retrieves all grades with active status',
-  })
-  @ApiResponse({
-    status: 200,
-    description: 'List of active grades retrieved successfully',
-    type: [Grade],
-  })
-  findAll(): Grade[] {
-    return this.gradesService.findAllGrades();
-  }
-
-  @Get('by-status')
-  @ApiOperation({
     summary: 'Get grades filtered by status',
     description:
-      'Retrieves grades filtered by status. If no status is provided, returns all grades',
+      'Retrieves grades filtered by status. If no status is provided, returns all grades (active and inactive)',
   })
   @ApiQuery({
     name: 'status',
     required: false,
     type: Boolean,
-    description: 'Filter by status: true for active, false for inactive',
+    description:
+      'Filter by status: true for active, false for inactive. If omitted, returns all grades',
     example: true,
   })
   @ApiResponse({
     status: 200,
-    description: 'List of grades filtered by status retrieved successfully',
+    description: 'List of grades retrieved successfully',
     type: [Grade],
   })
-  findAllGradesByStatus(
+  async findAll(
     @Query('status', new ParseBoolPipe({ optional: true })) status?: boolean,
-  ): Grade[] {
+  ): Promise<Grade[]> {
     return this.gradesService.findAllGradesByStatus(status);
   }
 
@@ -103,7 +90,7 @@ export class GradesController {
     status: 404,
     description: 'Grade not found',
   })
-  findOneGrade(@Param('id', ParseIntPipe) id: number): Grade {
+  async findOneGrade(@Param('id', ParseIntPipe) id: number): Promise<Grade> {
     return this.gradesService.findOneGrade(id);
   }
 
@@ -131,10 +118,10 @@ export class GradesController {
     status: 409,
     description: 'Grade with this level already exists',
   })
-  updateGrade(
+  async updateGrade(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateGradeDto: UpdateGradeDto,
-  ): Grade {
+  ): Promise<Grade> {
     return this.gradesService.updateGrade(id, updateGradeDto);
   }
 
@@ -166,7 +153,9 @@ export class GradesController {
     status: 404,
     description: 'Grade not found',
   })
-  deleteGrade(@Param('id', ParseIntPipe) id: number): { message: string } {
+  async deleteGrade(
+    @Param('id', ParseIntPipe) id: number,
+  ): Promise<{ message: string }> {
     return this.gradesService.deleteGrade(id);
   }
 }

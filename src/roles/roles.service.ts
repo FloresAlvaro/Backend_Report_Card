@@ -6,66 +6,90 @@ import {
 import { CreateRoleDto } from './dto/create-role.dto';
 import { UpdateRoleDto } from './dto/update-role.dto';
 import { Role } from './entities/role.entity';
+import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
 export class RolesService {
-  private roles: Role[] = [];
-  private nextId = 1;
+  constructor(private prisma: PrismaService) {}
 
-  createRole(createRoleDto: CreateRoleDto): Role {
+  async createRole(createRoleDto: CreateRoleDto): Promise<Role> {
     // Verify that the name is not already in use
-    const existingRole = this.roles.find(
-      (role) =>
-        role.name.toLowerCase() === createRoleDto.name.toLowerCase() &&
-        role.status,
-    );
+    const existingRole = await this.prisma.role.findFirst({
+      where: {
+        roleName: {
+          equals: createRoleDto.name,
+          mode: 'insensitive',
+        },
+        roleStatus: true,
+      },
+    });
+
     if (existingRole) {
       throw new ConflictException(
         `Role with name '${createRoleDto.name}' already exists`,
       );
     }
 
-    const role = new Role({
-      id: this.nextId++,
-      ...createRoleDto,
+    const role = await this.prisma.role.create({
+      data: {
+        roleName: createRoleDto.name,
+        roleStatus: createRoleDto.status ?? true,
+      },
     });
 
-    this.roles.push(role);
-    return role;
+    return new Role(role);
   }
 
-  findAllRoles(): Role[] {
-    return this.roles.filter((role) => role.status);
+  async findAllRoles(): Promise<Role[]> {
+    const roles = await this.prisma.role.findMany({
+      where: { roleStatus: true },
+    });
+    return roles.map((role) => new Role(role));
   }
 
-  findAllRolesWithStatus(): Role[] {
-    return this.roles;
+  async findAllRolesByStatus(status?: boolean): Promise<Role[]> {
+    const whereCondition = status !== undefined ? { roleStatus: status } : {};
+
+    const roles = await this.prisma.role.findMany({
+      where: whereCondition,
+    });
+    return roles.map((role) => new Role(role));
   }
 
-  findOneRole(id: number): Role {
-    const role = this.roles.find((role) => role.id === id && role.status);
+  async findAllRolesWithStatus(): Promise<Role[]> {
+    const roles = await this.prisma.role.findMany();
+    return roles.map((role) => new Role(role));
+  }
+
+  async findOneRole(id: number): Promise<Role> {
+    const role = await this.prisma.role.findFirst({
+      where: { roleId: id, roleStatus: true },
+    });
+
     if (!role) {
       throw new NotFoundException(`Role with ID ${id} not found`);
     }
-    return role;
+
+    return new Role(role);
   }
 
-  updateRole(id: number, updateRoleDto: UpdateRoleDto): Role {
-    const roleIndex = this.roles.findIndex(
-      (role) => role.id === id && role.status,
-    );
-    if (roleIndex === -1) {
-      throw new NotFoundException(`Role with ID ${id} not found`);
-    }
+  async updateRole(id: number, updateRoleDto: UpdateRoleDto): Promise<Role> {
+    // Verify that the role exists
+    await this.findOneRole(id);
 
     // Verify duplicate name if updating name
     if (updateRoleDto.name) {
-      const existingRole = this.roles.find(
-        (role) =>
-          role.name.toLowerCase() === updateRoleDto.name!.toLowerCase() &&
-          role.status &&
-          role.id !== id,
-      );
+      const existingRole = await this.prisma.role.findFirst({
+        where: {
+          roleName: {
+            equals: updateRoleDto.name,
+            mode: 'insensitive',
+          },
+          roleStatus: true,
+          NOT: { roleId: id },
+        },
+      });
+
       if (existingRole) {
         throw new ConflictException(
           `Role with name '${updateRoleDto.name}' already exists`,
@@ -73,24 +97,29 @@ export class RolesService {
       }
     }
 
-    this.roles[roleIndex] = {
-      ...this.roles[roleIndex],
-      ...updateRoleDto,
-    };
+    const updateData: Partial<{
+      roleName: string;
+      roleStatus: boolean;
+    }> = {};
+    if (updateRoleDto.name) updateData.roleName = updateRoleDto.name;
+    if (updateRoleDto.status !== undefined)
+      updateData.roleStatus = updateRoleDto.status;
 
-    return this.roles[roleIndex];
+    const role = await this.prisma.role.update({
+      where: { roleId: id },
+      data: updateData,
+    });
+
+    return new Role(role);
   }
 
-  deleteRole(id: number): { message: string } {
-    const roleIndex = this.roles.findIndex(
-      (role) => role.id === id && role.status,
-    );
-    if (roleIndex === -1) {
-      throw new NotFoundException(`Role with ID ${id} not found`);
-    }
+  async deleteRole(id: number): Promise<{ message: string }> {
+    await this.findOneRole(id);
 
-    // Soft delete - just mark as inactive
-    this.roles[roleIndex].status = false;
+    await this.prisma.role.update({
+      where: { roleId: id },
+      data: { roleStatus: false },
+    });
 
     return { message: `Role with ID ${id} has been removed` };
   }

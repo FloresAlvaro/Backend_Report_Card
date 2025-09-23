@@ -1,0 +1,135 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Role {
+  roleId     Int     @id @default(autoincrement()) @map("roleId")
+  roleName   String  @map("roleName") @db.VarChar(255)
+  roleStatus Boolean @map("roleStatus")
+  User       User[]
+
+  @@map("Role")
+}
+
+model Grade {
+  gradeId          Int            @id @default(autoincrement()) @map("gradeId")
+  gradeLevel       String         @map("gradeLevel") @db.VarChar(255)
+  gradeDescription String         @map("gradeDescription") @db.VarChar(255)
+  gradeStatus      Boolean        @map("gradeStatus")
+  GradeSubject     GradeSubject[]
+  Grade_Record     Grade_Record[]
+  Student          Student[]
+  TeacherGrade     TeacherGrade[]
+
+  @@map("Grade")
+}
+
+model Subject {
+  subjectID          Int              @id @default(autoincrement()) @map("subjectID")
+  subjectName        String           @map("subjectName") @db.VarChar(255)
+  subjectDescription String           @map("subjectDescription") @db.VarChar(255)
+  subjectStatus      Boolean          @map("subjectStatus")
+  GradeSubject       GradeSubject[]
+  Grade_Record       Grade_Record[]
+  TeacherSubject     TeacherSubject[]
+
+  @@map("Subject")
+}
+
+model GradeSubject {
+  gradeSubjectId Int     @id
+  gradeId        Int
+  subjectId      Int
+  Grade          Grade   @relation(fields: [gradeId], references: [gradeId], onDelete: NoAction, onUpdate: NoAction, map: "gradesubject_gradeid_foreign")
+  Subject        Subject @relation(fields: [subjectId], references: [subjectID], onDelete: NoAction, onUpdate: NoAction, map: "gradesubject_subjectid_foreign")
+
+  @@index([gradeId], map: "gradesubject_gradeid_index")
+  @@index([subjectId], map: "gradesubject_subjectid_index")
+}
+
+model Grade_Record {
+  gradeRecordId  Int      @id
+  studentId      Int
+  subjectId      Int
+  gradeId        Int
+  score          Decimal  @db.Decimal(5, 2)
+  maxScore       Decimal  @db.Decimal(5, 2)
+  gradeType      String   @db.VarChar(50)
+  evaluationDate DateTime @db.Date
+  academicPeriod String   @db.VarChar(50)
+  comments       String?
+  recordStatus   Boolean
+  Grade          Grade    @relation(fields: [gradeId], references: [gradeId], onDelete: NoAction, onUpdate: NoAction, map: "graderecord_gradeid_foreign")
+  Student        Student  @relation(fields: [studentId], references: [studentId], onDelete: NoAction, onUpdate: NoAction, map: "graderecord_studentid_foreign")
+  Subject        Subject  @relation(fields: [subjectId], references: [subjectID], onDelete: NoAction, onUpdate: NoAction, map: "graderecord_subjectid_foreign")
+
+  @@index([gradeId], map: "graderecord_gradeid_index")
+  @@index([studentId], map: "graderecord_studentid_index")
+  @@index([subjectId], map: "graderecord_subjectid_index")
+}
+
+model Student {
+  studentId    Int            @id
+  userId       Int
+  gradeId      Int
+  Grade_Record Grade_Record[]
+  Grade        Grade          @relation(fields: [gradeId], references: [gradeId], onDelete: NoAction, onUpdate: NoAction, map: "student_gradeid_foreign")
+  User         User           @relation(fields: [userId], references: [userId], onDelete: NoAction, onUpdate: NoAction, map: "student_userid_foreign")
+
+  @@index([gradeId], map: "student_gradeid_index")
+  @@index([userId], map: "student_userid_index")
+}
+
+model Teacher {
+  teacherId      Int              @id
+  userId         Int
+  User           User             @relation(fields: [userId], references: [userId], onDelete: NoAction, onUpdate: NoAction, map: "teacher_userid_foreign")
+  TeacherGrade   TeacherGrade[]
+  TeacherSubject TeacherSubject[]
+
+  @@index([userId], map: "teacher_userid_index")
+}
+
+model TeacherGrade {
+  teacherGradeId Int     @id
+  teacherId      Int
+  gradeId        Int
+  Grade          Grade   @relation(fields: [gradeId], references: [gradeId], onDelete: NoAction, onUpdate: NoAction, map: "teachergrade_gradeid_foreign")
+  Teacher        Teacher @relation(fields: [teacherId], references: [teacherId], onDelete: NoAction, onUpdate: NoAction, map: "teachergrade_teacherid_foreign")
+
+  @@index([gradeId], map: "teachergrade_gradeid_index")
+  @@index([teacherId], map: "teachergrade_teacherid_index")
+}
+
+model TeacherSubject {
+  teacherSubjectId Int     @id
+  teacherId        Int
+  subjectId        Int
+  Subject          Subject @relation(fields: [subjectId], references: [subjectID], onDelete: NoAction, onUpdate: NoAction, map: "teachersubject_subjectid_foreign")
+  Teacher          Teacher @relation(fields: [teacherId], references: [teacherId], onDelete: NoAction, onUpdate: NoAction, map: "teachersubject_teacherid_foreign")
+
+  @@index([subjectId], map: "teachersubject_subjectid_index")
+  @@index([teacherId], map: "teachersubject_teacherid_index")
+}
+
+model User {
+  userId             Int       @id
+  userFirstName      String    @db.VarChar(255)
+  userSecondName     String    @db.VarChar(255)
+  userFirstLastName  String    @db.VarChar(255)
+  userSecondLastName String    @db.VarChar(255)
+  userEmail          String    @db.VarChar(255)
+  userPassword       String    @db.VarChar(255)
+  userRoleId         Int
+  userStatus         Boolean
+  Student            Student[]
+  Teacher            Teacher[]
+  Role               Role      @relation(fields: [userRoleId], references: [roleId], onDelete: NoAction, onUpdate: NoAction, map: "user_userroleid_foreign")
+
+  @@index([userRoleId], map: "user_userroleid_index")
+}

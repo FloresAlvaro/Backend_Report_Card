@@ -20,7 +20,7 @@ export class UsersService {
   create(createUserDto: CreateUserDto): User {
     // Verify role exists
     try {
-      this.rolesService.findOneRole(createUserDto.roleId);
+      void this.rolesService.findOneRole(createUserDto.roleId);
     } catch {
       throw new BadRequestException(
         `Role with ID ${createUserDto.roleId} does not exist`,
@@ -78,7 +78,7 @@ export class UsersService {
     // Verify role exists if updating roleId
     if (updateUserDto.roleId) {
       try {
-        this.rolesService.findOneRole(updateUserDto.roleId);
+        void this.rolesService.findOneRole(updateUserDto.roleId);
       } catch {
         throw new BadRequestException(
           `Role with ID ${updateUserDto.roleId} does not exist`,
@@ -123,11 +123,11 @@ export class UsersService {
     return { message: `User with ID ${id} has been removed` };
   }
 
-  findUserWithRole(id: number): UserWithRoleDto {
+  async findUserWithRole(id: number): Promise<UserWithRoleDto> {
     const user = this.findOne(id);
     if (user.roleId) {
       try {
-        const role = this.rolesService.findOneRole(user.roleId);
+        const role = await this.rolesService.findOneRole(user.roleId);
         return { ...user, role } as UserWithRoleDto;
       } catch {
         // Role might have been deleted, but we still return the user

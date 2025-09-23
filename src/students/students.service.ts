@@ -16,10 +16,10 @@ export class StudentsService {
 
   constructor(private readonly rolesService: RolesService) {}
 
-  create(createStudentDto: CreateStudentDto): Student {
+  async create(createStudentDto: CreateStudentDto): Promise<Student> {
     // Verify role exists
     try {
-      this.rolesService.findOneRole(createStudentDto.roleId);
+      await this.rolesService.findOneRole(createStudentDto.roleId);
     } catch {
       throw new BadRequestException(
         `Role with ID ${createStudentDto.roleId} does not exist`,
@@ -80,7 +80,10 @@ export class StudentsService {
     return studentWithoutPassword as Student;
   }
 
-  update(id: number, updateStudentDto: UpdateStudentDto): Student {
+  async update(
+    id: number,
+    updateStudentDto: UpdateStudentDto,
+  ): Promise<Student> {
     const studentIndex = this.students.findIndex(
       (student) => student.id === id && student.status,
     );
@@ -93,7 +96,7 @@ export class StudentsService {
     // Verify role exists if being updated
     if (updateStudentDto.roleId) {
       try {
-        this.rolesService.findOneRole(updateStudentDto.roleId);
+        await this.rolesService.findOneRole(updateStudentDto.roleId);
       } catch {
         throw new BadRequestException(
           `Role with ID ${updateStudentDto.roleId} does not exist`,

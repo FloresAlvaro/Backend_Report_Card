@@ -5,7 +5,7 @@ export class Role {
     description: 'Unique identifier for the role',
     example: 1,
   })
-  id: number;
+  roleId: number;
 
   @ApiProperty({
     description: 'Name of the role',
@@ -21,18 +21,31 @@ export class Role {
       },
     },
   })
-  name: string;
+  roleName: string;
 
   @ApiProperty({
     description: 'Status of the role (active/inactive)',
     example: true,
   })
-  status: boolean;
+  roleStatus: boolean;
 
   constructor(partial: Partial<Role> = {}) {
     Object.assign(this, partial);
-    if (this.status === undefined) {
-      this.status = true; // Default to active
+    if (this.roleStatus === undefined) {
+      this.roleStatus = true; // Default to active
     }
+  }
+
+  // Helper methods for backward compatibility with existing code
+  get id(): number {
+    return this.roleId;
+  }
+
+  get name(): string {
+    return this.roleName;
+  }
+
+  get status(): boolean {
+    return this.roleStatus;
   }
 }

@@ -1,13 +1,9 @@
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
-import { UsersModule } from './users/users.module';
 import { RolesModule } from './roles/roles.module';
 import { GradesModule } from './grades/grades.module';
 import { SubjectsModule } from './subjects/subjects.module';
-import { TeachersModule } from './teachers/teachers.module';
-import { StudentsModule } from './students/students.module';
-import { SeedModule } from './seeds/seed.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -25,25 +21,23 @@ async function bootstrap() {
     .setTitle('Report Card API')
     .setDescription('API documentation for Report Card management system')
     .setVersion('1.0')
-    .addTag('Users', 'User management endpoints')
+    // .addTag('Users', 'User management endpoints')
     .addTag('Roles', 'Role management endpoints')
     .addTag('Grades', 'Grade management endpoints')
     .addTag('Subjects', 'Subject management endpoints')
-    .addTag('Teachers', 'Teacher management endpoints')
-    .addTag('Students', 'Student management endpoints')
-    .addTag('Seeds', 'Database seeding endpoints for sample data')
+    // .addTag('Teachers', 'Teacher management endpoints')
+    // .addTag('Students', 'Student management endpoints')
     .build();
 
   // Crear documento con todos los módulos principales
   const document = SwaggerModule.createDocument(app, config, {
     include: [
-      UsersModule,
+      // UsersModule,
       RolesModule,
       GradesModule,
       SubjectsModule,
-      TeachersModule,
-      StudentsModule,
-      SeedModule,
+      // TeachersModule,
+      // StudentsModule,
     ],
   });
 

@@ -4,7 +4,7 @@ export class Subject {
     description: 'Unique identifier for the subject',
     example: 1,
   })
-  id: number;
+  subjectID: number;
 
   @ApiProperty({
     description: 'Name of the subject',
@@ -13,36 +13,34 @@ export class Subject {
   subjectName: string;
 
   @ApiProperty({
+    description: 'Description of the subject content',
+    example: 'Advanced mathematics including algebra and geometry',
+  })
+  subjectDescription: string;
+
+  @ApiProperty({
     description: 'Status of the subject',
     example: true,
   })
-  status: boolean;
-
-  @ApiProperty({
-    description: 'ID of the teacher assigned to this subject',
-    example: 1,
-    required: false,
-  })
-  teacherId?: number;
-
-  @ApiProperty({
-    description: 'Description of the subject content',
-    example: 'Advanced mathematics including algebra and geometry',
-    required: false,
-  })
-  description?: string;
-
-  @ApiProperty({
-    description: 'Number of hours per week for this subject',
-    example: 4,
-    required: false,
-  })
-  hoursPerWeek?: number;
+  subjectStatus: boolean;
 
   constructor(partial: Partial<Subject> = {}) {
     Object.assign(this, partial);
-    if (this.status === undefined) {
-      this.status = true; // Default to active
+    if (this.subjectStatus === undefined) {
+      this.subjectStatus = true; // Default to active
     }
+  }
+
+  // Helper methods for backward compatibility with existing code
+  get id(): number {
+    return this.subjectID;
+  }
+
+  get status(): boolean {
+    return this.subjectStatus;
+  }
+
+  get description(): string {
+    return this.subjectDescription;
   }
 }

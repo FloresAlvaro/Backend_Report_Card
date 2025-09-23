@@ -49,7 +49,7 @@ export class TeachersController {
     description:
       'Conflict - Teacher with this email or license number already exists',
   })
-  create(@Body() createTeacherDto: CreateTeacherDto): Teacher {
+  async create(@Body() createTeacherDto: CreateTeacherDto): Promise<Teacher> {
     return this.teachersService.create(createTeacherDto);
   }
 
@@ -182,10 +182,10 @@ export class TeachersController {
     status: 409,
     description: 'Conflict - Email or license number already exists',
   })
-  update(
+  async update(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateTeacherDto: UpdateTeacherDto,
-  ): Teacher {
+  ): Promise<Teacher> {
     return this.teachersService.update(id, updateTeacherDto);
   }
 

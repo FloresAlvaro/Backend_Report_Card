@@ -110,7 +110,9 @@ export class UsersController {
     status: 404,
     description: 'User not found',
   })
-  findUserWithRole(@Param('id', ParseIntPipe) id: number): UserWithRoleDto {
+  async findUserWithRole(
+    @Param('id', ParseIntPipe) id: number,
+  ): Promise<UserWithRoleDto> {
     return this.usersService.findUserWithRole(id);
   }
 

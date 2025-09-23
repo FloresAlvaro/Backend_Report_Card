@@ -9,6 +9,8 @@ import {
   ParseIntPipe,
   HttpCode,
   HttpStatus,
+  Query,
+  ParseBoolPipe,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -16,6 +18,7 @@ import {
   ApiResponse,
   ApiParam,
   ApiBody,
+  ApiQuery,
 } from '@nestjs/swagger';
 import { RolesService } from './roles.service';
 import { CreateRoleDto } from './dto/create-role.dto';
@@ -42,38 +45,33 @@ export class RolesController {
     status: 409,
     description: 'Conflict - Role with this name already exists',
   })
-  createRole(@Body() createRoleDto: CreateRoleDto): Role {
+  async createRole(@Body() createRoleDto: CreateRoleDto): Promise<Role> {
     return this.rolesService.createRole(createRoleDto);
   }
 
   @Get()
   @ApiOperation({
-    summary: 'Get all active roles',
-    description: 'Retrieves all active roles in the system',
+    summary: 'Get roles filtered by status',
+    description:
+      'Retrieves roles filtered by status. If no status is provided, returns all roles (active and inactive)',
+  })
+  @ApiQuery({
+    name: 'status',
+    required: false,
+    type: Boolean,
+    description:
+      'Filter by status: true for active, false for inactive. If omitted, returns all roles',
+    example: true,
   })
   @ApiResponse({
     status: 200,
-    description: 'List of active roles retrieved successfully',
+    description: 'List of roles retrieved successfully',
     type: [Role],
   })
-  findAllRoles(): Role[] {
-    return this.rolesService.findAllRoles();
-  }
-
-  @Get('all-status')
-  @ApiOperation({
-    summary: 'Get all roles with their status',
-    description:
-      'Retrieves all roles in the system including both active and inactive ones',
-  })
-  @ApiResponse({
-    status: 200,
-    description:
-      'List of all roles (active and inactive) retrieved successfully',
-    type: [Role],
-  })
-  findAllRolesWithStatus(): Role[] {
-    return this.rolesService.findAllRolesWithStatus();
+  async findAllRoles(
+    @Query('status', new ParseBoolPipe({ optional: true })) status?: boolean,
+  ): Promise<Role[]> {
+    return this.rolesService.findAllRolesByStatus(status);
   }
 
   @Get(':id')
@@ -96,7 +94,7 @@ export class RolesController {
     status: 404,
     description: 'Role not found',
   })
-  findOneRole(@Param('id', ParseIntPipe) id: number): Role {
+  async findOneRole(@Param('id', ParseIntPipe) id: number): Promise<Role> {
     return this.rolesService.findOneRole(id);
   }
 
@@ -125,10 +123,10 @@ export class RolesController {
     status: 409,
     description: 'Conflict - Role name already exists',
   })
-  updateRole(
+  async updateRole(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateRoleDto: UpdateRoleDto,
-  ): Role {
+  ): Promise<Role> {
     return this.rolesService.updateRole(id, updateRoleDto);
   }
 
@@ -161,7 +159,9 @@ export class RolesController {
     status: 404,
     description: 'Role not found',
   })
-  deleteRole(@Param('id', ParseIntPipe) id: number): { message: string } {
+  async deleteRole(
+    @Param('id', ParseIntPipe) id: number,
+  ): Promise<{ message: string }> {
     return this.rolesService.deleteRole(id);
   }
 }

@@ -41,45 +41,34 @@ export class SubjectsController {
     status: 409,
     description: 'Subject with this name already exists',
   })
-  createSubject(@Body() createSubjectDto: CreateSubjectDto): Subject {
+  async createSubject(
+    @Body() createSubjectDto: CreateSubjectDto,
+  ): Promise<Subject> {
     return this.subjectsService.createSubject(createSubjectDto);
   }
 
   @Get()
   @ApiOperation({
-    summary: 'Get all active subjects',
-    description: 'Retrieves all subjects with active status',
-  })
-  @ApiResponse({
-    status: 200,
-    description: 'List of active subjects retrieved successfully',
-    type: [Subject],
-  })
-  findAll(): Subject[] {
-    return this.subjectsService.findAllSubjects();
-  }
-
-  @Get('by-status')
-  @ApiOperation({
     summary: 'Get subjects filtered by status',
     description:
-      'Retrieves subjects filtered by status. If no status is provided, returns all subjects',
+      'Retrieves subjects filtered by status. If no status is provided, returns all subjects (active and inactive)',
   })
   @ApiQuery({
     name: 'status',
     required: false,
     type: Boolean,
-    description: 'Filter by status: true for active, false for inactive',
+    description:
+      'Filter by status: true for active, false for inactive. If omitted, returns all subjects',
     example: true,
   })
   @ApiResponse({
     status: 200,
-    description: 'List of subjects filtered by status retrieved successfully',
+    description: 'List of subjects retrieved successfully',
     type: [Subject],
   })
-  findAllSubjectsByStatus(
+  async findAll(
     @Query('status', new ParseBoolPipe({ optional: true })) status?: boolean,
-  ): Subject[] {
+  ): Promise<Subject[]> {
     return this.subjectsService.findAllSubjectsByStatus(status);
   }
 
@@ -103,7 +92,9 @@ export class SubjectsController {
     status: 404,
     description: 'Subject not found',
   })
-  findOneSubject(@Param('id', ParseIntPipe) id: number): Subject {
+  async findOneSubject(
+    @Param('id', ParseIntPipe) id: number,
+  ): Promise<Subject> {
     return this.subjectsService.findOneSubject(id);
   }
 
@@ -131,10 +122,10 @@ export class SubjectsController {
     status: 409,
     description: 'Subject with this name already exists',
   })
-  updateSubject(
+  async updateSubject(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateSubjectDto: UpdateSubjectDto,
-  ): Subject {
+  ): Promise<Subject> {
     return this.subjectsService.updateSubject(id, updateSubjectDto);
   }
 
@@ -166,7 +157,9 @@ export class SubjectsController {
     status: 404,
     description: 'Subject not found',
   })
-  deleteSubject(@Param('id', ParseIntPipe) id: number): { message: string } {
+  async deleteSubject(
+    @Param('id', ParseIntPipe) id: number,
+  ): Promise<{ message: string }> {
     return this.subjectsService.deleteSubject(id);
   }
 }

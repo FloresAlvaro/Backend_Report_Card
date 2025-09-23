@@ -50,7 +50,7 @@ export class StudentsController {
     description:
       'Conflict - Student with this email or enrollment number already exists',
   })
-  create(@Body() createStudentDto: CreateStudentDto): Student {
+  async create(@Body() createStudentDto: CreateStudentDto): Promise<Student> {
     return this.studentsService.create(createStudentDto);
   }
 
@@ -215,10 +215,10 @@ export class StudentsController {
     status: 409,
     description: 'Conflict - Email or enrollment number already exists',
   })
-  update(
+  async update(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateStudentDto: UpdateStudentDto,
-  ): Student {
+  ): Promise<Student> {
     return this.studentsService.update(id, updateStudentDto);
   }
 

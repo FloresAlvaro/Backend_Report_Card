@@ -5,30 +5,47 @@ export class Grade {
     description: 'Unique identifier for the grade',
     example: 1,
   })
-  id: number;
+  gradeId: number;
 
   @ApiProperty({
     description: 'The grade level',
     example: '1A',
   })
-  level: string;
+  gradeLevel: string;
 
   @ApiProperty({
     description: 'Description of the grade',
     example: 'primero de secundaria a',
   })
-  description: string;
+  gradeDescription: string;
 
   @ApiProperty({
     description: 'Status of the grade (active/inactive)',
     example: true,
   })
-  status: boolean;
+  gradeStatus: boolean;
 
   constructor(partial: Partial<Grade> = {}) {
     Object.assign(this, partial);
-    if (this.status === undefined) {
-      this.status = true; // Default to active
+    if (this.gradeStatus === undefined) {
+      this.gradeStatus = true; // Default to active
     }
+  }
+
+  // Helper methods for backward compatibility with existing code
+  get id(): number {
+    return this.gradeId;
+  }
+
+  get level(): string {
+    return this.gradeLevel;
+  }
+
+  get description(): string {
+    return this.gradeDescription;
+  }
+
+  get status(): boolean {
+    return this.gradeStatus;
   }
 }
